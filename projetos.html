@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projeto Praça Pet - Ugo Ventura</title>
+    
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+
+    <style>
+        /* Ajustes específicos para Mobile e Acessibilidade */
+        body {
+            font-family: sans-serif; /* Fonte moderna sem serifa */
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+        main {
+            padding: 20px; /* Evita que o texto cole na borda do celular */
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .projeto-header h1 {
+            color: blue; /* Azul solicitado para visibilidade */
+            font-size: 1.8rem;
+        }
+        .card-projeto {
+            display: block;
+            text-decoration: none;
+            padding: 25px;
+            margin-bottom: 20px;
+            border: 2px solid #eee;
+            border-radius: 15px;
+            transition: 0.3s;
+            text-align: center;
+        }
+        .card-projeto:hover {
+            border-color: blue;
+            background-color: #f0f7ff;
+        }
+        .card-projeto i {
+            font-size: 2.5rem;
+            color: blue; /* Ícones em azul para destaque */
+            margin-bottom: 10px;
+        }
+        .card-projeto h4 {
+            color: blue;
+            margin: 10px 0;
+            font-size: 1.2rem;
+        }
+        .card-projeto p {
+            color: #444;
+            font-size: 0.95rem;
+        }
+        .status-box {
+            background: #fdfdfd;
+            padding: 30px;
+            border-radius: 15px;
+            border: 2px dashed blue; /* Destaque visual azul */
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <header id="main-header"></header>
+
+    <main>
+        <section class="projeto-header" data-aos="fade-down" style="text-align: center;">
+            <img src="https://images.unsplash.com/photo-1598133894008-61f7fdb8cc3a?auto=format&fit=crop&w=800&q=80" 
+                 alt="Cachorro feliz brincando em uma praça com grama" 
+                 style="border-radius: 15px; width: 100%; height: auto; max-height: 300px; object-fit: cover;">
+            
+            <h1>Projeto: Praça Pet Acessível 🐾</h1>
+            <p style="font-weight: bold; color: #555;">Transformando espaços públicos através da voz da comunidade.</p>
+        </section>
+
+        <section class="sobre-projeto" data-aos="fade-up" style="margin-top: 30px;">
+            <h3>O que é este projeto?</h3>
+            <p>Este canal foi criado para que tutores de animais possam mapear e avaliar as condições das praças da nossa cidade. O objetivo é reunir esses dados para cobrar melhorias reais dos órgãos públicos e garantir o bem-estar dos nossos cães.</p>
+        </section>
+
+        <hr style="margin: 40px 0; border: 0; border-top: 1px solid #eee;">
+
+        <section class="acoes-projeto" data-aos="zoom-in">
+            <a href="https://docs.google.com/forms/d/e/1FAIpQLSd1_lme-SfNuk9jrCskzSa_jjmT0-1IQWZY3ox0mP19o7jP1A/viewform" 
+               target="_blank" 
+               class="card-projeto"
+               role="button"
+               aria-label="Escrever novo relato no formulário (abre em nova aba)">
+                <i class="fas fa-pencil-alt" aria-hidden="true"></i>
+                <h4>Escrever Relato / Denúncia</h4>
+                <p>Clique aqui para enviar fotos e textos sobre a praça.</p>
+            </a>
+
+            <a href="https://docs.google.com/spreadsheets/d/1raQ49At3U05o1c5sGCpzH_M1kQYxZhxB7dGAOysIquA/edit?usp=sharing" 
+               target="_blank" 
+               class="card-projeto"
+               role="button"
+               aria-label="Visualizar fotos e relatos na planilha (abre em nova aba)">
+                <i class="fas fa-eye" aria-hidden="true"></i>
+                <h4>Visualizar Fotos e Relatos</h4>
+                <p>Veja o que outras pessoas comentaram sobre as praças.</p>
+            </a>
+        </section>
+
+        <section id="lista-relatos" style="margin-top: 40px;" data-aos="fade-up">
+            <h3 style="text-align: center;">Relatos da Comunidade</h3>
+            <div class="status-box">
+                <i class="fas fa-comments" style="font-size: 2.5rem; color: #ccc; margin-bottom: 15px;"></i>
+                <p>Assim que for ajustada a planilha os relatos devem aparecer nesse campo.</p>
+            </div>
+        </section>
+    </main>
+
+    <footer id="main-footer"></footer>
+
+    <script src="js/menu.js"></script>
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    <script>
+        AOS.init({ duration: 1000, once: true });
+    </script>
+</body>
+</html>
