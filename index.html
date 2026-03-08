@@ -6,7 +6,6 @@
     <title>Ugo Ventura | QA de Acessibilidade</title>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     
     <link rel="stylesheet" href="css/style.css">
@@ -21,24 +20,47 @@
             <p class="subtitulo">Especialista em QA de Acessibilidade</p>
         </section>
 
-        <section class="destaques">
-            <h2 data-aos="fade-left">Destaques</h2>
+        <section class="sobre-mim" data-aos="fade-up">
+            <h2>Além do QA: Entusiasta</h2>
+            <p>Quando não estou auditando código, gosto de passar tempo com animais. Eles trazem alegria e me lembram da importância da simplicidade.</p>
+            
+            <div class="carousel-container" role="region" aria-roledescription="carousel" aria-label="Galeria de fotos dos meus cachorros">
+                
+                <div id="carousel-status" class="sr-only" aria-live="polite" 
+                     style="position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0;">
+                    Exibindo Foto 1 de 3
+                </div>
+
+                <div class="carousel-slides" id="carousel-slides">
+                    <div class="slide" role="group" aria-roledescription="slide" aria-label="1 de 3">
+                        <img src="images/cachorro01.jpg" alt="Um cachorro caramelo correndo feliz na grama verde">
+                    </div>
+                    <div class="slide" role="group" aria-roledescription="slide" aria-label="2 de 3">
+                        <img src="images/cachorro02.jpg" alt="Um cachorro preto e branco descansando">
+                    </div>
+                    <div class="slide" role="group" aria-roledescription="slide" aria-label="3 de 3">
+                        <img src="images/cachorro03.jpg" alt="Um cachorro grande e um filhote interagindo no chão">
+                    </div>
+                </div>
+
+                <button class="carousel-btn prev" id="prev-btn" aria-label="Foto anterior">
+                    <i class="fas fa-chevron-left" aria-hidden="true"></i>
+                </button>
+                <button class="carousel-btn next" id="next-btn" aria-label="Próxima foto">
+                    <i class="fas fa-chevron-right" aria-hidden="true"></i>
+                </button>
+            </div>
+        </section>
+
+        <section class="destaques" data-aos="fade-up">
+            <h2>Conteúdo em Destaque</h2>
             <div class="card-grid">
                 <article class="card" data-aos="zoom-in">
                     <i class="fab fa-youtube" aria-hidden="true" style="font-size: 2rem; color: red;"></i>
-                    <h3>Vídeo em Destaque</h3>
-                    <p>Assista ao meu conteúdo sobre acessibilidade digital no YouTube.</p>
-                    <a href="https://www.youtube.com/watch?v=UW9lQev63oY" target="_blank" aria-label="Assistir vídeo de Ugo Ventura no YouTube (abre em nova aba)">
+                    <h3>Tornando o Formulário Acessível</h3>
+                    <p>Demonstração real de como a falta de etiquetas (labels) impede o preenchimento de cadastros.</p>
+                    <a href="https://www.youtube.com/watch?v=UW9lQev63oY" target="_blank" aria-label="Assistir vídeo sobre formulários acessíveis no YouTube (abre em nova aba)">
                         Assistir no YouTube
-                    </a>
-                </article>
-
-                <article class="card" data-aos="zoom-in" data-delay="200">
-                    <i class="fab fa-linkedin" aria-hidden="true" style="font-size: 2rem; color: #0077b5;"></i>
-                    <h3>Meu LinkedIn</h3>
-                    <p>Acompanhe meus artigos e conexões profissionais.</p>
-                    <a href="https://www.linkedin.com/in/ugo-rocha-ventura-97335a68/" target="_blank" aria-label="Visitar perfil de Ugo Ventura no LinkedIn (abre em nova aba)">
-                        Ver Perfil
                     </a>
                 </article>
             </div>
@@ -49,18 +71,43 @@
 
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
-        // Inicializa as animações prevenindo erros em dispositivos antigos
-        try {
-            AOS.init({
-                duration: 1000,
-                once: true,
-                disable: 'mobile' // Opcional: desativa animações em celulares muito lentos se desejar
-            });
-        } catch (e) {
-            console.log("Erro ao carregar animações, o site continuará funcionando normalmente.");
-        }
-    </script>
+        // Inicializa animações
+        AOS.init({ duration: 1000, once: true });
 
+        // Lógica do Carrossel com Feedback Acessível
+        const slides = document.getElementById('carousel-slides');
+        const statusAcessivel = document.getElementById('carousel-status');
+        const totalSlides = 3;
+        let index = 0;
+
+        // Descrições fáceis de editar para o leitor de tela
+        const descricoes = [
+            "Um cachorro caramelo correndo feliz na grama verde",
+            "Um cachorro preto e branco descansando",
+            "Um cachorro grande e um filhote interagindo no chão"
+        ];
+
+        const atualizarCarrossel = (novoIndex) => {
+            index = novoIndex;
+            
+            // Movimento visual
+            slides.style.transform = `translateX(${-index * 100}%)`;
+            
+            // Anúncio para o leitor de tela (Aria-Live)
+            const mensagem = `Foto ${index + 1} de ${totalSlides}. ${descricoes[index]}`;
+            statusAcessivel.innerText = mensagem;
+        };
+
+        document.getElementById('next-btn').addEventListener('click', () => {
+            const proximo = (index + 1) % totalSlides;
+            atualizarCarrossel(proximo);
+        });
+
+        document.getElementById('prev-btn').addEventListener('click', () => {
+            const anterior = (index - 1 + totalSlides) % totalSlides;
+            atualizarCarrossel(anterior);
+        });
+    </script>
     <script src="js/menu.js"></script>
 </body>
 </html>

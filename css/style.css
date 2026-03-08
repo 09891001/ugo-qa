@@ -1,81 +1,228 @@
-/* Estilo Profissional para Ugo Ventura - QA de Acessibilidade */
+/* Estilo Profissional Ugo Ventura - Foco em Acessibilidade e Mobile First */
+
 :root {
-    --primaria: #002D5B;    /* Azul Marinho Elegante */
-    --secundaria: #FFD700;  /* Destaques em Ouro */
-    --fundo: #F8F9FA;
-    --texto: #212529;
+    --primaria: #003366;    /* Azul Marinho para Nome e Botões (Alto Contraste) */
+    --secundaria: #FFD700;  /* Amarelo Ouro para Destaques Visuais */
+    --fundo: #FFFFFF;
+    --texto: #1A1A1A;
+    --cinza-claro: #F4F4F4;
 }
 
+/* Configurações Gerais */
 body {
     font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    background-color: var(--fundo);
     color: var(--texto);
+    line-height: 1.6;
     margin: 0;
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
+    padding: 0;
+    background-color: var(--fundo);
+    text-align: center;
 }
 
-/* Centralização de todo o conteúdo principal */
+/* CLASSE PARA ACESSIBILIDADE (ARIA-LIVE) 
+   Esconde o texto da tela, mas mantém para o Leitor de Tela */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}
+
+/* --- CABEÇALHO E NAVEGAÇÃO --- */
+#main-header {
+    background: var(--fundo);
+    border-bottom: 2px solid var(--cinza-claro);
+    padding: 1rem;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.logo a {
+    color: var(--primaria) !important;
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-decoration: none;
+    display: inline-block;
+}
+
+/* Botão Hambúrguer (Tamanho de toque padrão WCAG 44x44px) */
+#menu-toggle {
+    background: none;
+    border: 2px solid var(--primaria);
+    color: var(--primaria);
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.2rem;
+    min-width: 44px;
+    min-height: 44px;
+}
+
+/* Estilo do Menu no Celular */
+#menu-list {
+    list-style: none;
+    padding: 0;
+    margin: 10px 0 0 0;
+    background: var(--primaria);
+    border-radius: 8px;
+}
+
+#menu-list li a {
+    color: white;
+    padding: 15px;
+    display: block;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+/* --- CONTEÚDO PRINCIPAL --- */
 main {
     max-width: 900px;
-    margin: 0 auto; /* Isso centraliza a página no meio da tela */
-    padding: 40px 20px;
-    text-align: center; /* Centraliza o texto e as imagens */
+    margin: 0 auto;
+    padding: 20px;
 }
 
-/* Foto de Perfil Redonda e Elegante */
+/* Foto de Perfil Redonda */
 .perfil-img {
     width: 180px;
     height: 180px;
     border-radius: 50%;
-    border: 6px solid var(--primaria);
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-    margin-bottom: 20px;
+    border: 5px solid var(--primaria);
+    margin: 20px auto;
+    display: block;
+    object-fit: cover;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
 
-/* Títulos com mais peso e modernidade */
 h1 {
-    font-size: 2.5rem;
     color: var(--primaria);
-    margin-bottom: 10px;
+    margin-bottom: 5px;
 }
 
 .subtitulo {
-    font-size: 1.2rem;
-    color: #666;
+    font-size: 1.1rem;
+    color: #555;
     margin-bottom: 40px;
 }
 
-/* Cards de Destaque (Vídeo e LinkedIn) */
+/* Espaçamento entre texto e carrossel */
+.sobre-mim p {
+    margin-bottom: 25px; 
+}
+
+/* --- CARROSSEL RESPONSIVO --- */
+.carousel-container {
+    max-width: 600px;
+    margin: 40px auto;
+    position: relative;
+    overflow: hidden;
+    border-radius: 15px;
+    background: var(--cinza-claro);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.carousel-slides {
+    display: flex;
+    transition: transform 0.5s ease-in-out;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+}
+
+.slide {
+    min-width: 100%;
+    box-sizing: border-box;
+    scroll-snap-align: center;
+}
+
+.slide img {
+    width: 100%;
+    height: 350px;
+    object-fit: cover;
+    display: block;
+}
+
+/* Botões com Feedback Visual e Acessibilidade */
+.carousel-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 51, 102, 0.7);
+    color: white;
+    border: none;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.carousel-btn:hover { background: var(--primaria); }
+.prev { left: 10px; }
+.next { right: 10px; }
+
+/* --- CARDS E DESTAQUES --- */
 .card-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 30px;
-    margin-top: 50px;
+    display: flex;
+    justify-content: center;
+    margin-top: 30px;
 }
 
 .card {
     background: white;
-    padding: 30px;
+    padding: 25px;
     border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
     border-top: 5px solid var(--primaria);
-    transition: transform 0.3s ease;
+    max-width: 400px;
+    width: 100%;
 }
 
-.card:hover {
-    transform: translateY(-10px); /* O card sobe um pouco ao passar o mouse */
-}
-
-/* Links em forma de botões modernos */
 .card a {
     display: inline-block;
-    margin-top: 20px;
-    padding: 12px 25px;
-    background-color: var(--primaria);
+    margin-top: 15px;
+    padding: 10px 20px;
+    background: var(--primaria);
     color: white;
     text-decoration: none;
-    border-radius: 50px;
+    border-radius: 25px;
     font-weight: bold;
+}
+
+/* --- RODAPÉ --- */
+#main-footer {
+    background: var(--cinza-claro);
+    padding: 30px 20px;
+    margin-top: 50px;
+    border-top: 1px solid #ddd;
+}
+
+.social-links a {
+    font-size: 2rem;
+    margin: 0 15px;
+    color: var(--primaria);
+    text-decoration: none;
+}
+
+/* --- ADAPTAÇÃO PARA PC (MIN-WIDTH 768px) --- */
+@media (min-width: 768px) {
+    #menu-toggle { display: none; }
+    #menu-list {
+        display: flex !important;
+        background: none;
+        margin: 0;
+    }
+    #menu-list li a {
+        color: var(--primaria);
+        border: none;
+        padding: 10px 20px;
+    }
 }
