@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <header id="main-header"></header>
@@ -16,7 +16,7 @@
     <main id="conteudo-principal">
         <section class="hero" data-aos="fade-up">
             <img src="images/ugo.jpg" alt="Foto de perfil de Ugo Ventura" class="perfil-img">
-            <h1 data-aos="fade-right">Ugo Ventura</h1>
+            <h1 data-aos="fade-right" style="color: blue;">Ugo Ventura</h1>
             <p class="subtitulo">Especialista em QA de Acessibilidade</p>
         </section>
 
@@ -26,27 +26,26 @@
             
             <div class="carousel-container" role="region" aria-roledescription="carousel" aria-label="Galeria de fotos dos meus cachorros">
                 
-                <div id="carousel-status" class="sr-only" aria-live="polite" 
-                     style="position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0;">
+                <div id="carousel-status" class="sr-only" aria-live="polite">
                     Exibindo Foto 1 de 3
                 </div>
 
-                <div class="carousel-slides" id="carousel-slides">
-                    <div class="slide" role="group" aria-roledescription="slide" aria-label="1 de 3">
-                        <img src="images/cachorro01.jpg" alt="Um cachorro caramelo correndo feliz na grama verde">
+                <div class="carousel-slides" id="carousel-slides" style="display: flex; transition: transform 0.5s ease-in-out;">
+                    <div class="slide" role="group" aria-roledescription="slide" aria-label="1 de 3" style="min-width: 100%;">
+                        <img src="images/cachorro01.jpg" alt="Um cachorro caramelo correndo feliz na grama verde" style="width: 100%; border-radius: 15px;">
                     </div>
-                    <div class="slide" role="group" aria-roledescription="slide" aria-label="2 de 3">
-                        <img src="images/cachorro02.jpg" alt="Um cachorro preto e branco descansando">
+                    <div class="slide" role="group" aria-roledescription="slide" aria-label="2 de 3" style="min-width: 100%;">
+                        <img src="images/cachorro02.jpg" alt="Um cachorro preto e branco descansando" style="width: 100%; border-radius: 15px;">
                     </div>
-                    <div class="slide" role="group" aria-roledescription="slide" aria-label="3 de 3">
-                        <img src="images/cachorro03.jpg" alt="Um cachorro grande e um filhote interagindo no chão">
+                    <div class="slide" role="group" aria-roledescription="slide" aria-label="3 de 3" style="min-width: 100%;">
+                        <img src="images/cachorro03.jpg" alt="Um cachorro grande e um filhote interagindo no chão" style="width: 100%; border-radius: 15px;">
                     </div>
                 </div>
 
-                <button class="carousel-btn prev" id="prev-btn" aria-label="Foto anterior">
+                <button class="carousel-btn prev" id="prev-btn" aria-label="Foto anterior" style="cursor: pointer;">
                     <i class="fas fa-chevron-left" aria-hidden="true"></i>
                 </button>
-                <button class="carousel-btn next" id="next-btn" aria-label="Próxima foto">
+                <button class="carousel-btn next" id="next-btn" aria-label="Próxima foto" style="cursor: pointer;">
                     <i class="fas fa-chevron-right" aria-hidden="true"></i>
                 </button>
             </div>
@@ -55,11 +54,13 @@
         <section class="destaques" data-aos="fade-up">
             <h2>Conteúdo em Destaque</h2>
             <div class="card-grid">
-                <article class="card" data-aos="zoom-in">
-                    <i class="fab fa-youtube" aria-hidden="true" style="font-size: 2rem; color: red;"></i>
+                <article class="card" data-aos="zoom-in" style="padding: 20px; border: 1px solid #eee; border-radius: 10px; text-align: center;">
+                    <i class="fab fa-youtube" aria-hidden="true" style="font-size: 2.5rem; color: red; margin-bottom: 15px;"></i>
                     <h3>Tornando o Formulário Acessível</h3>
                     <p>Demonstração real de como a falta de etiquetas (labels) impede o preenchimento de cadastros.</p>
-                    <a href="https://www.youtube.com/watch?v=UW9lQev63oY" target="_blank" aria-label="Assistir vídeo sobre formulários acessíveis no YouTube (abre em nova aba)">
+                    <a href="https://www.youtube.com/watch?v=UW9lQev63oY" target="_blank" 
+                       aria-label="Assistir vídeo sobre formulários acessíveis no YouTube (abre em nova aba)"
+                       style="display: inline-block; margin-top: 10px; color: blue; font-weight: bold; text-decoration: none;">
                         Assistir no YouTube
                     </a>
                 </article>
@@ -70,17 +71,20 @@
     <footer id="main-footer"></footer>
 
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    
+    <script src="js/menu.js"></script>
+
     <script>
-        // Inicializa animações
+        // Inicializa animações AOS
         AOS.init({ duration: 1000, once: true });
 
         // Lógica do Carrossel com Feedback Acessível
-        const slides = document.getElementById('carousel-slides');
+        const slidesContainer = document.getElementById('carousel-slides');
         const statusAcessivel = document.getElementById('carousel-status');
         const totalSlides = 3;
         let index = 0;
 
-        // Descrições fáceis de editar para o leitor de tela
+        // Descrições para o leitor de tela
         const descricoes = [
             "Um cachorro caramelo correndo feliz na grama verde",
             "Um cachorro preto e branco descansando",
@@ -90,14 +94,15 @@
         const atualizarCarrossel = (novoIndex) => {
             index = novoIndex;
             
-            // Movimento visual
-            slides.style.transform = `translateX(${-index * 100}%)`;
+            // Movimento visual: desliza os slides horizontalmente
+            slidesContainer.style.transform = `translateX(${-index * 100}%)`;
             
-            // Anúncio para o leitor de tela (Aria-Live)
+            // Anúncio via Aria-Live para o usuário cego saber qual foto está vendo
             const mensagem = `Foto ${index + 1} de ${totalSlides}. ${descricoes[index]}`;
             statusAcessivel.innerText = mensagem;
         };
 
+        // Eventos dos botões
         document.getElementById('next-btn').addEventListener('click', () => {
             const proximo = (index + 1) % totalSlides;
             atualizarCarrossel(proximo);
@@ -108,6 +113,5 @@
             atualizarCarrossel(anterior);
         });
     </script>
-    <script src="js/menu.js"></script>
 </body>
 </html>

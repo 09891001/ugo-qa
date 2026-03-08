@@ -1,228 +1,128 @@
-/* Estilo Profissional Ugo Ventura - Foco em Acessibilidade e Mobile First */
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projeto Praça Pet - Ugo Ventura</title>
+    
+    <link rel="stylesheet" href="css/style.css">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
 
-:root {
-    --primaria: #003366;    /* Azul Marinho para Nome e Botões (Alto Contraste) */
-    --secundaria: #FFD700;  /* Amarelo Ouro para Destaques Visuais */
-    --fundo: #FFFFFF;
-    --texto: #1A1A1A;
-    --cinza-claro: #F4F4F4;
-}
+    <style>
+        /* CSS Interno para garantir o visual */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+        main {
+            padding: 20px 15px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .projeto-header h1 {
+            color: blue; 
+            font-size: 1.8rem;
+            margin-top: 20px;
+        }
+        .card-projeto {
+            display: block;
+            text-decoration: none;
+            padding: 25px;
+            margin-bottom: 20px;
+            border: 2px solid #eee;
+            border-radius: 15px;
+            transition: transform 0.2s, border-color 0.2s;
+            text-align: center;
+        }
+        .card-projeto:hover {
+            border-color: blue;
+            background-color: #f0f7ff;
+            transform: translateY(-3px);
+        }
+        .card-projeto i {
+            font-size: 2.5rem;
+            color: blue; 
+            margin-bottom: 12px;
+        }
+        .card-projeto h4 {
+            color: blue;
+            margin: 10px 0;
+        }
+        .status-box {
+            background: #fafafa;
+            padding: 40px 20px;
+            border-radius: 15px;
+            border: 2px dashed blue; 
+            text-align: center;
+            margin-top: 25px;
+        }
+        .img-header {
+            border-radius: 15px; 
+            width: 100%; 
+            height: auto; 
+            max-height: 350px; 
+            object-fit: cover;
+            display: block;
+        }
+    </style>
+</head>
+<body>
 
-/* Configurações Gerais */
-body {
-    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    color: var(--texto);
-    line-height: 1.6;
-    margin: 0;
-    padding: 0;
-    background-color: var(--fundo);
-    text-align: center;
-}
+    <header id="main-header"></header>
 
-/* CLASSE PARA ACESSIBILIDADE (ARIA-LIVE) 
-   Esconde o texto da tela, mas mantém para o Leitor de Tela */
-.sr-only {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border-width: 0;
-}
+    <main>
+        <section class="projeto-header" data-aos="fade-down" style="text-align: center;">
+            <img src="https://images.unsplash.com/photo-1598133894008-61f7fdb8cc3a?auto=format&fit=crop&w=800&q=80" 
+                 alt="Cachorro feliz brincando em uma praça com grama" 
+                 class="img-header">
+            
+            <h1>Projeto: Praça Pet Acessível 🐾</h1>
+            <p style="font-weight: bold; color: #444;">Transformando espaços públicos através da voz da comunidade.</p>
+        </section>
 
-/* --- CABEÇALHO E NAVEGAÇÃO --- */
-#main-header {
-    background: var(--fundo);
-    border-bottom: 2px solid var(--cinza-claro);
-    padding: 1rem;
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-}
+        <section class="acoes-projeto" data-aos="zoom-in" style="margin-top: 30px;">
+            <a href="https://docs.google.com/forms/d/e/1FAIpQLSd1_lme-SfNuk9jrCskzSa_jjmT0-1IQWZY3ox0mP19o7jP1A/viewform" 
+               target="_blank" 
+               class="card-projeto"
+               role="button">
+                <i class="fas fa-pencil-alt"></i>
+                <h4>Escrever Relato / Denúncia</h4>
+                <p>Clique aqui para enviar fotos e textos sobre a praça.</p>
+            </a>
 
-.logo a {
-    color: var(--primaria) !important;
-    font-size: 1.5rem;
-    font-weight: bold;
-    text-decoration: none;
-    display: inline-block;
-}
+            <a href="https://docs.google.com/spreadsheets/d/1raQ49At3U05o1c5sGCpzH_M1kQYxZhxB7dGAOysIquA/edit?usp=sharing" 
+               target="_blank" 
+               class="card-projeto"
+               role="button">
+                <i class="fas fa-eye"></i>
+                <h4>Visualizar Fotos e Relatos</h4>
+                <p>Veja o que outras pessoas comentaram sobre as praças.</p>
+            </a>
+        </section>
 
-/* Botão Hambúrguer (Tamanho de toque padrão WCAG 44x44px) */
-#menu-toggle {
-    background: none;
-    border: 2px solid var(--primaria);
-    color: var(--primaria);
-    padding: 8px 12px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 1.2rem;
-    min-width: 44px;
-    min-height: 44px;
-}
+        <section id="lista-relatos" style="margin-top: 45px;" data-aos="fade-up">
+            <h3 style="text-align: center;">Relatos da Comunidade</h3>
+            <div class="status-box">
+                <i class="fas fa-comments" style="font-size: 3rem; color: #ddd; margin-bottom: 15px;"></i>
+                <p>Assim que for ajustada a planilha os relatos devem aparecer nesse campo.</p>
+            </div>
+        </section>
+    </main>
 
-/* Estilo do Menu no Celular */
-#menu-list {
-    list-style: none;
-    padding: 0;
-    margin: 10px 0 0 0;
-    background: var(--primaria);
-    border-radius: 8px;
-}
+    <footer id="main-footer"></footer>
 
-#menu-list li a {
-    color: white;
-    padding: 15px;
-    display: block;
-    text-decoration: none;
-    border-bottom: 1px solid rgba(255,255,255,0.1);
-}
-
-/* --- CONTEÚDO PRINCIPAL --- */
-main {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 20px;
-}
-
-/* Foto de Perfil Redonda */
-.perfil-img {
-    width: 180px;
-    height: 180px;
-    border-radius: 50%;
-    border: 5px solid var(--primaria);
-    margin: 20px auto;
-    display: block;
-    object-fit: cover;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-}
-
-h1 {
-    color: var(--primaria);
-    margin-bottom: 5px;
-}
-
-.subtitulo {
-    font-size: 1.1rem;
-    color: #555;
-    margin-bottom: 40px;
-}
-
-/* Espaçamento entre texto e carrossel */
-.sobre-mim p {
-    margin-bottom: 25px; 
-}
-
-/* --- CARROSSEL RESPONSIVO --- */
-.carousel-container {
-    max-width: 600px;
-    margin: 40px auto;
-    position: relative;
-    overflow: hidden;
-    border-radius: 15px;
-    background: var(--cinza-claro);
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-}
-
-.carousel-slides {
-    display: flex;
-    transition: transform 0.5s ease-in-out;
-    scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
-}
-
-.slide {
-    min-width: 100%;
-    box-sizing: border-box;
-    scroll-snap-align: center;
-}
-
-.slide img {
-    width: 100%;
-    height: 350px;
-    object-fit: cover;
-    display: block;
-}
-
-/* Botões com Feedback Visual e Acessibilidade */
-.carousel-btn {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background: rgba(0, 51, 102, 0.7);
-    color: white;
-    border: none;
-    width: 45px;
-    height: 45px;
-    border-radius: 50%;
-    cursor: pointer;
-    z-index: 10;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.carousel-btn:hover { background: var(--primaria); }
-.prev { left: 10px; }
-.next { right: 10px; }
-
-/* --- CARDS E DESTAQUES --- */
-.card-grid {
-    display: flex;
-    justify-content: center;
-    margin-top: 30px;
-}
-
-.card {
-    background: white;
-    padding: 25px;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-    border-top: 5px solid var(--primaria);
-    max-width: 400px;
-    width: 100%;
-}
-
-.card a {
-    display: inline-block;
-    margin-top: 15px;
-    padding: 10px 20px;
-    background: var(--primaria);
-    color: white;
-    text-decoration: none;
-    border-radius: 25px;
-    font-weight: bold;
-}
-
-/* --- RODAPÉ --- */
-#main-footer {
-    background: var(--cinza-claro);
-    padding: 30px 20px;
-    margin-top: 50px;
-    border-top: 1px solid #ddd;
-}
-
-.social-links a {
-    font-size: 2rem;
-    margin: 0 15px;
-    color: var(--primaria);
-    text-decoration: none;
-}
-
-/* --- ADAPTAÇÃO PARA PC (MIN-WIDTH 768px) --- */
-@media (min-width: 768px) {
-    #menu-toggle { display: none; }
-    #menu-list {
-        display: flex !important;
-        background: none;
-        margin: 0;
-    }
-    #menu-list li a {
-        color: var(--primaria);
-        border: none;
-        padding: 10px 20px;
-    }
-}
+    <script src="js/menu.js"></script>
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof AOS !== 'undefined') {
+                AOS.init({ duration: 1000, once: true });
+            }
+        });
+    </script>
+</body>
+</html>

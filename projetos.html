@@ -6,25 +6,27 @@
     <title>Projeto Praça Pet - Ugo Ventura</title>
     
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
 
     <style>
-        /* Ajustes específicos para Mobile e Acessibilidade */
+        /* Ajustes de QA e Acessibilidade */
         body {
-            font-family: sans-serif; /* Fonte moderna sem serifa */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             padding: 0;
             overflow-x: hidden;
+            background-color: #ffffff;
         }
         main {
-            padding: 20px; /* Evita que o texto cole na borda do celular */
+            padding: 20px 15px; /* Respiro lateral para mobile */
             max-width: 800px;
             margin: 0 auto;
         }
         .projeto-header h1 {
             color: blue; /* Azul solicitado para visibilidade */
             font-size: 1.8rem;
+            margin-top: 20px;
         }
         .card-projeto {
             display: block;
@@ -33,34 +35,46 @@
             margin-bottom: 20px;
             border: 2px solid #eee;
             border-radius: 15px;
-            transition: 0.3s;
+            transition: transform 0.2s, border-color 0.2s;
             text-align: center;
         }
-        .card-projeto:hover {
+        .card-projeto:hover, .card-projeto:focus {
             border-color: blue;
             background-color: #f0f7ff;
+            transform: translateY(-3px); /* Feedback visual moderno */
+            outline: none;
         }
         .card-projeto i {
             font-size: 2.5rem;
-            color: blue; /* Ícones em azul para destaque */
-            margin-bottom: 10px;
+            color: blue; 
+            margin-bottom: 12px;
         }
         .card-projeto h4 {
             color: blue;
             margin: 10px 0;
-            font-size: 1.2rem;
+            font-size: 1.3rem;
         }
         .card-projeto p {
-            color: #444;
-            font-size: 0.95rem;
+            color: #333;
+            font-size: 1rem;
+            line-height: 1.4;
         }
         .status-box {
-            background: #fdfdfd;
-            padding: 30px;
+            background: #fafafa;
+            padding: 40px 20px;
             border-radius: 15px;
-            border: 2px dashed blue; /* Destaque visual azul */
+            border: 2px dashed blue; 
             text-align: center;
-            margin-top: 20px;
+            margin-top: 25px;
+        }
+        /* Garantia de responsividade para imagens */
+        .img-header {
+            border-radius: 15px; 
+            width: 100%; 
+            height: auto; 
+            max-height: 350px; 
+            object-fit: cover;
+            display: block;
         }
     </style>
 </head>
@@ -72,13 +86,13 @@
         <section class="projeto-header" data-aos="fade-down" style="text-align: center;">
             <img src="https://images.unsplash.com/photo-1598133894008-61f7fdb8cc3a?auto=format&fit=crop&w=800&q=80" 
                  alt="Cachorro feliz brincando em uma praça com grama" 
-                 style="border-radius: 15px; width: 100%; height: auto; max-height: 300px; object-fit: cover;">
+                 class="img-header">
             
             <h1>Projeto: Praça Pet Acessível 🐾</h1>
-            <p style="font-weight: bold; color: #555;">Transformando espaços públicos através da voz da comunidade.</p>
+            <p style="font-weight: bold; color: #444; font-size: 1.1rem;">Transformando espaços públicos através da voz da comunidade.</p>
         </section>
 
-        <section class="sobre-projeto" data-aos="fade-up" style="margin-top: 30px;">
+        <section class="sobre-projeto" data-aos="fade-up" style="margin-top: 35px;">
             <h3>O que é este projeto?</h3>
             <p>Este canal foi criado para que tutores de animais possam mapear e avaliar as condições das praças da nossa cidade. O objetivo é reunir esses dados para cobrar melhorias reais dos órgãos públicos e garantir o bem-estar dos nossos cães.</p>
         </section>
@@ -107,11 +121,11 @@
             </a>
         </section>
 
-        <section id="lista-relatos" style="margin-top: 40px;" data-aos="fade-up">
-            <h3 style="text-align: center;">Relatos da Comunidade</h3>
+        <section id="lista-relatos" style="margin-top: 45px;" data-aos="fade-up">
+            <h3 style="text-align: center; color: #333;">Relatos da Comunidade</h3>
             <div class="status-box">
-                <i class="fas fa-comments" style="font-size: 2.5rem; color: #ccc; margin-bottom: 15px;"></i>
-                <p>Assim que for ajustada a planilha os relatos devem aparecer nesse campo.</p>
+                <i class="fas fa-comments" style="font-size: 3rem; color: #ddd; margin-bottom: 15px;" aria-hidden="true"></i>
+                <p style="font-size: 1.1rem; color: #666;">Assim que for ajustada a planilha os relatos devem aparecer nesse campo.</p>
             </div>
         </section>
     </main>
@@ -121,7 +135,16 @@
     <script src="js/menu.js"></script>
     <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
     <script>
-        AOS.init({ duration: 1000, once: true });
+        // Inicialização do AOS com prevenção de erros
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof AOS !== 'undefined') {
+                AOS.init({ 
+                    duration: 1000, 
+                    once: true,
+                    disable: 'mobile' 
+                });
+            }
+        });
     </script>
 </body>
 </html>
