@@ -4,40 +4,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Projeto Praça Pet | Ugo Ventura</title>
-    <meta name="description" content="Projeto comunitário para avaliar praças pet e sugerir melhorias">
-
+    
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <style>
-        /* Estilos de Acessibilidade e Layout */
-        #lista-avaliacoes { 
-            display: flex; 
-            flex-direction: column; 
-            gap: 40px; 
-            padding: 20px 0; 
-        }
+        #lista-avaliacoes { display: flex; flex-direction: column; gap: 40px; padding: 20px 0; }
         .card-praca {
             background: #fff;
             border-radius: 15px;
             padding: 25px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.08);
             border-left: 6px solid #0000FF;
-            margin-bottom: 10px;
         }
         .foto-praca {
             width: 100%;
-            max-height: 400px;
+            max-height: 450px;
             object-fit: cover;
             border-radius: 10px;
             margin: 15px 0;
+            display: block;
         }
-        .mapa-praca { 
-            border-radius: 10px; 
-            border: 1px solid #ddd; 
-            background-color: #f0f0f0;
-        }
+        .mapa-praca { border-radius: 10px; border: 1px solid #ddd; background-color: #f0f0f0; }
         .instrucoes-upload {
             background: #f0f4ff; 
             padding: 20px; 
@@ -49,84 +38,64 @@
             background-color: #0000FF;
             color: white;
             border: none;
-            padding: 10px 15px;
+            padding: 12px;
             border-radius: 5px;
             cursor: pointer;
             margin-top: 10px;
             font-weight: bold;
-        }
-        .botao-copiar:hover {
-            background-color: #000099;
+            width: 100%;
         }
         h3 i { margin-right: 10px; color: #0000FF; }
-        p i { margin-right: 8px; color: #555; }
     </style>
 </head>
 
-<body data-cy="pagina-projetos">
+<body>
 
-<header data-cy="header-principal">
-    <h1 data-cy="titulo-projeto">Projeto Praça Pet</h1>
-    <p data-cy="descricao-projeto">
-        Iniciativa comunitária para avaliar praças com espaço para animais e sugerir melhorias.
-    </p>
+<header>
+    <h1>Projeto Praça Pet</h1>
+    <p>Iniciativa de Ugo Ventura para mapeamento e acessibilidade de praças.</p>
 </header>
 
 <main>
-    <section class="upload-section" data-cy="secao-upload">
+    <section class="upload-section">
         <h2>1. Envie a foto da praça</h2>
-        
-        <div class="instrucoes-upload" role="note" aria-label="Instruções de uso">
-            <p><strong>Siga estes 3 passos para sua foto aparecer no site:</strong></p>
+        <div class="instrucoes-upload" role="note">
+            <p><strong>Passo a passo:</strong></p>
             <ol>
-                <li>Clique em "Selecionar foto" e escolha a imagem.</li>
-                <li>Quando o link aparecer, clique no botão <strong>"Copiar Link da Foto"</strong>.</li>
-                <li>Cole esse link no campo de foto do <strong>Formulário de Avaliação</strong> logo abaixo.</li>
+                <li>Selecione a foto abaixo.</li>
+                <li>Clique no botão azul <strong>"Copiar Link da Foto"</strong>.</li>
+                <li>Cole no campo de foto do formulário abaixo.</li>
             </ol>
         </div>
 
-        <label for="foto-praca">Selecionar arquivo de imagem</label>
-        <input type="file" id="foto-praca" accept="image/png,image/jpeg,image/webp" data-cy="input-foto">
+        <input type="file" id="foto-praca" accept="image/*">
+        <p id="upload-status" aria-live="polite"></p>
         
-        <p id="upload-status" data-cy="status-upload" aria-live="polite"></p>
+        <label for="foto-url">Link gerado para copiar:</label>
+        <input type="text" id="foto-url" readonly style="width: 100%; padding: 10px; background: #eee; border: 1px solid #ccc;">
+        <button type="button" class="botao-copiar" id="btn-copiar">
+            <i class="fas fa-copy"></i> Copiar Link da Foto
+        </button>
         
-        <label for="foto-url">Link da imagem gerado:</label>
-        <div style="display: flex; flex-direction: column; gap: 5px;">
-            <input type="text" id="foto-url" readonly data-cy="url-imagem" 
-                   style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; background: #eee;">
-            <button type="button" class="botao-copiar" id="btn-copiar" title="Copiar link para a área de transferência">
-                <i class="fas fa-copy"></i> Copiar Link da Foto
-            </button>
-        </div>
-        
-        <img id="preview-imagem" alt="Pré-visualização da imagem enviada" style="display:none; max-width:100%; margin-top:15px; border-radius: 10px;" data-cy="preview-imagem">
+        <img id="preview-imagem" alt="Pré-visualização" style="display:none; max-width:100%; margin-top:15px; border-radius: 10px;">
     </section>
 
-    <section class="formulario" data-cy="secao-formulario">
-        <h2>2. Enviar Avaliação</h2>
-        <p>Preencha os dados da praça e cole o link da foto gerado acima.</p>
-        <div class="form-container">
-            <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSd1_lme-SfNuk9jrCskzSa_jjmT0-1IQWZY3ox0mP19o7jP1A/viewform?embedded=true"
-                    title="Formulário avaliação praça pet" loading="lazy" width="100%" height="1200" frameborder="0" data-cy="formulario-google">
-                Carregando formulário...
-            </iframe>
-        </div>
+    <section class="formulario">
+        <h2>2. Preencha a Avaliação</h2>
+        <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSd1_lme-SfNuk9jrCskzSa_jjmT0-1IQWZY3ox0mP19o7jP1A/viewform?embedded=true"
+                width="100%" height="1000" frameborder="0">Carregando...</iframe>
     </section>
 
-    <section class="buscar-praca" data-cy="secao-busca">
+    <section>
         <h2>Praças Avaliadas</h2>
-        <label for="buscar-praca">Buscar praça por endereço</label>
-        <input type="search" id="buscar-praca" placeholder="Digite o endereço da praça" data-cy="input-busca">
-    </section>
-
-    <section class="lista-avaliacoes" data-cy="secao-avaliacoes">
-        <div id="lista-avaliacoes" aria-live="polite" data-cy="lista-avaliacoes">
-            <p style="text-align:center;">Sincronizando com a base de dados...</p>
+        <input type="search" id="buscar-praca" placeholder="Buscar por endereço..." style="width:100%; padding:10px; margin-bottom:20px;">
+        <div id="lista-avaliacoes" aria-live="polite">
+            <p style="text-align:center;">Carregando avaliações...</p>
         </div>
     </section>
 </main>
 
-<footer data-cy="footer-site">
+<footer>
     <p>© 2026 Ugo Ventura - QA de Acessibilidade</p>
 </footer>
 
@@ -135,125 +104,87 @@
 
 <script>
     const URL_PLANILHA = "https://docs.google.com/spreadsheets/d/1raQ49At3U05o1c5sGCpzH_M1kQYxZhxB7dGAOysIquA/gviz/tq?tqx=out:json&sheet=respostas";
-    let dados = [];
+    let dadosCache = [];
 
-    document.addEventListener("DOMContentLoaded", iniciar);
+    document.addEventListener("DOMContentLoaded", () => {
+        carregarDados();
+        configurarCopia();
+        document.getElementById("buscar-praca").addEventListener("input", e => filtrar(e.target.value));
+    });
 
-    function iniciar() {
-        carregarAvaliacoes();
-        configurarBotaoCopiar();
-        const campoBusca = document.getElementById("buscar-praca");
-        if (campoBusca) {
-            campoBusca.addEventListener("input", function() {
-                filtrarPracas(this.value);
-            });
-        }
-    }
-
-    function configurarBotaoCopiar() {
-        const btn = document.getElementById("btn-copiar");
-        const input = document.getElementById("foto-url");
-        
-        btn.addEventListener("click", () => {
-            if (input.value) {
-                input.select();
-                input.setSelectionRange(0, 99999); // Para dispositivos móveis
-                navigator.clipboard.writeText(input.value);
-                alert("Link copiado! Agora cole-o no campo de foto do formulário abaixo.");
+    function configurarCopia() {
+        document.getElementById("btn-copiar").addEventListener("click", () => {
+            const url = document.getElementById("foto-url");
+            if (url.value) {
+                navigator.clipboard.writeText(url.value);
+                alert("Link copiado! Cole-o no formulário abaixo.");
             } else {
-                alert("Primeiro faça o upload de uma foto.");
+                alert("Primeiro, selecione uma foto.");
             }
         });
     }
 
-    async function carregarAvaliacoes() {
-        const container = document.getElementById("lista-avaliacoes");
+    async function carregarDados() {
         try {
-            const resposta = await fetch(URL_PLANILHA);
-            const texto = await resposta.text();
-            const jsonLimpo = JSON.parse(texto.substring(47, texto.length - 2));
+            const res = await fetch(URL_PLANILHA);
+            const texto = await res.text();
+            const json = JSON.parse(texto.substring(47, texto.length - 2));
             
-            // Trava de segurança para linhas vazias
-            const linhasFiltradas = jsonLimpo.table.rows.filter(row => {
-                return row.c && row.c[0] && row.c[0].v && row.c[1] && row.c[1].v;
-            });
+            // Filtro para ignorar linhas sem nome (Coluna B / r[1])
+            const linhas = json.table.rows.filter(row => row.c && row.c[1] && row.c[1].v);
 
-            dados = linhasFiltradas.map(row => {
+            dadosCache = linhas.map(row => {
                 const r = row.c;
                 return {
-                    tutor: r[0] ? r[0].v : "Anônimo",
-                    endereco: r[1] ? r[1].v : "",
-                    observacoes: r[2] ? r[2].v : "",
-                    whatsapp: r[4] ? r[4].v : "",
-                    // r[6] representa a Coluna G, onde o link da foto está agora
-                    foto: (r[6] && r[6].v) ? r[6].v : "" 
+                    tutor: r[1] ? r[1].v : "Anônimo",
+                    whatsapp: r[2] ? r[2].v : "Não informado",
+                    endereco: r[3] ? r[3].v : "Endereço não informado",
+                    // Coluna G (índice 6) é onde está o link da foto
+                    foto: (r[6] && r[6].v) ? r[6].v : "",
+                    // Coluna H (índice 7) são os comentários
+                    comentarios: r[7] ? r[7].v : "Sem observações."
                 };
             });
-            renderizarLista(dados);
-        } catch (erro) {
-            container.innerHTML = "<p style='text-align:center;'>Erro ao carregar relatos. Verifique a planilha.</p>";
-            console.error("Erro QA:", erro);
+            renderizar(dadosCache);
+        } catch (e) {
+            console.error("Erro QA:", e);
+            document.getElementById("lista-avaliacoes").innerHTML = "<p>Erro ao carregar dados.</p>";
         }
     }
 
-    function renderizarLista(lista) {
+    function renderizar(lista) {
         const container = document.getElementById("lista-avaliacoes");
-        if (!lista || !lista.length) {
-            container.innerHTML = "<p style='text-align:center;'>Nenhuma avaliação encontrada.</p>";
-            return;
-        }
+        container.innerHTML = lista.map((item, i) => `
+            <article class="card-praca">
+                <h3><i class="fas fa-user-circle"></i> ${item.tutor}</h3>
+                <p><strong><i class="fas fa-map-marker-alt"></i> Endereço:</strong> ${item.endereco}</p>
+                <p><strong><i class="fas fa-comment-alt"></i> Sugestão:</strong> ${item.comentarios}</p>
+                ${item.foto ? `<img src="${item.foto}" alt="Foto da praça" class="foto-praca">` : ""}
+                <p><strong><i class="fab fa-whatsapp"></i> Contato:</strong> ${item.whatsapp}</p>
+                <div id="map-${i}" class="mapa-praca" style="height:300px; margin-top:15px;"></div>
+            </article>
+        `).join("");
 
-        container.innerHTML = lista.map((item, index) => {
-            return `
-                <article class="card-praca" data-cy="card-praca">
-                    <h3 data-cy="nome-tutor"><i class="fas fa-user-circle"></i> ${item.tutor}</h3>
-                    <p><strong><i class="fas fa-map-marker-alt"></i> Endereço:</strong> 
-                       <span data-cy="endereco-praca">${item.endereco}</span></p>
-                    <p data-cy="observacoes"><strong><i class="fas fa-comment-alt"></i> Observações:</strong> ${item.observacoes || "Sem observações."}</p>
-                    ${item.foto ? `<img src="${item.foto}" alt="Foto da praça" class="foto-praca" data-cy="foto-praca">` : ""}
-                    <p><strong><i class="fab fa-whatsapp"></i> Contato:</strong> ${item.whatsapp || "Não informado"}</p>
-                    <div class="mapa-praca" id="mapa-${index}" role="region" aria-label="Mapa da praça" style="height:300px;margin-top:15px;"></div>
-                </article>
-            `;
-        }).join("");
-
-        iniciarMapas(lista);
+        lista.forEach((item, i) => {
+            if (item.endereco) carregarMapa(`map-${i}`, item.endereco);
+        });
     }
 
-    async function iniciarMapas(lista) {
-        for (let i = 0; i < lista.length; i++) {
-            const endereco = lista[i].endereco;
-            if (!endereco) continue;
-            try {
-                const coords = await buscarCoordenadas(endereco);
-                if (coords) {
-                    const mapa = L.map(`mapa-${i}`).setView([coords.lat, coords.lon], 16);
-                    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-                        attribution: "© OpenStreetMap"
-                    }).addTo(mapa);
-                    L.marker([coords.lat, coords.lon]).addTo(mapa).bindPopup(lista[i].endereco);
-                }
-            } catch (e) {
-                console.warn("Erro no mapa:", e);
-            }
-        }
-    }
-
-    async function buscarCoordenadas(endereco) {
+    async function carregarMapa(id, endereco) {
         try {
-            const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(endereco)}`;
-            const resposta = await fetch(url);
-            const d = await resposta.json();
-            return d.length ? { lat: d[0].lat, lon: d[0].lon } : null;
-        } catch (error) {
-            return null;
-        }
+            const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(endereco)}`);
+            const d = await res.json();
+            if (d.length) {
+                const map = L.map(id).setView([d[0].lat, d[0].lon], 16);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+                L.marker([d[0].lat, d[0].lon]).addTo(map);
+            }
+        } catch (e) { console.warn("Mapa indisponível"); }
     }
 
-    function filtrarPracas(texto) {
-        const termo = texto.toLowerCase();
-        const filtrado = dados.filter(p => (p.endereco || "").toLowerCase().includes(termo));
-        renderizarLista(filtrado);
+    function filtrar(termo) {
+        const filtrados = dadosCache.filter(d => d.endereco.toLowerCase().includes(termo.toLowerCase()));
+        renderizar(filtrados);
     }
 </script>
 
