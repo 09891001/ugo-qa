@@ -1,128 +1,340 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Projeto Praça Pet - Ugo Ventura</title>
-    
-    <link rel="stylesheet" href="css/style.css">
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+/* ================================
+RESET BÁSICO
+================================ */
 
-    <style>
-        /* CSS Interno para garantir o visual */
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 0;
-            overflow-x: hidden;
-        }
-        main {
-            padding: 20px 15px;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        .projeto-header h1 {
-            color: blue; 
-            font-size: 1.8rem;
-            margin-top: 20px;
-        }
-        .card-projeto {
-            display: block;
-            text-decoration: none;
-            padding: 25px;
-            margin-bottom: 20px;
-            border: 2px solid #eee;
-            border-radius: 15px;
-            transition: transform 0.2s, border-color 0.2s;
-            text-align: center;
-        }
-        .card-projeto:hover {
-            border-color: blue;
-            background-color: #f0f7ff;
-            transform: translateY(-3px);
-        }
-        .card-projeto i {
-            font-size: 2.5rem;
-            color: blue; 
-            margin-bottom: 12px;
-        }
-        .card-projeto h4 {
-            color: blue;
-            margin: 10px 0;
-        }
-        .status-box {
-            background: #fafafa;
-            padding: 40px 20px;
-            border-radius: 15px;
-            border: 2px dashed blue; 
-            text-align: center;
-            margin-top: 25px;
-        }
-        .img-header {
-            border-radius: 15px; 
-            width: 100%; 
-            height: auto; 
-            max-height: 350px; 
-            object-fit: cover;
-            display: block;
-        }
-    </style>
-</head>
-<body>
+* {
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
 
-    <header id="main-header"></header>
+body{
+font-family: 'Inter', Arial, sans-serif;
+line-height:1.6;
+background:#f5f7fa;
+color:#222;
+}
 
-    <main>
-        <section class="projeto-header" data-aos="fade-down" style="text-align: center;">
-            <img src="https://images.unsplash.com/photo-1598133894008-61f7fdb8cc3a?auto=format&fit=crop&w=800&q=80" 
-                 alt="Cachorro feliz brincando em uma praça com grama" 
-                 class="img-header">
-            
-            <h1>Projeto: Praça Pet Acessível 🐾</h1>
-            <p style="font-weight: bold; color: #444;">Transformando espaços públicos através da voz da comunidade.</p>
-        </section>
 
-        <section class="acoes-projeto" data-aos="zoom-in" style="margin-top: 30px;">
-            <a href="https://docs.google.com/forms/d/e/1FAIpQLSd1_lme-SfNuk9jrCskzSa_jjmT0-1IQWZY3ox0mP19o7jP1A/viewform" 
-               target="_blank" 
-               class="card-projeto"
-               role="button">
-                <i class="fas fa-pencil-alt"></i>
-                <h4>Escrever Relato / Denúncia</h4>
-                <p>Clique aqui para enviar fotos e textos sobre a praça.</p>
-            </a>
+/* ================================
+ACESSIBILIDADE
+================================ */
 
-            <a href="https://docs.google.com/spreadsheets/d/1raQ49At3U05o1c5sGCpzH_M1kQYxZhxB7dGAOysIquA/edit?usp=sharing" 
-               target="_blank" 
-               class="card-projeto"
-               role="button">
-                <i class="fas fa-eye"></i>
-                <h4>Visualizar Fotos e Relatos</h4>
-                <p>Veja o que outras pessoas comentaram sobre as praças.</p>
-            </a>
-        </section>
+.sr-only{
+position:absolute;
+width:1px;
+height:1px;
+padding:0;
+margin:-1px;
+overflow:hidden;
+clip:rect(0,0,0,0);
+border:0;
+}
 
-        <section id="lista-relatos" style="margin-top: 45px;" data-aos="fade-up">
-            <h3 style="text-align: center;">Relatos da Comunidade</h3>
-            <div class="status-box">
-                <i class="fas fa-comments" style="font-size: 3rem; color: #ddd; margin-bottom: 15px;"></i>
-                <p>Assim que for ajustada a planilha os relatos devem aparecer nesse campo.</p>
-            </div>
-        </section>
-    </main>
 
-    <footer id="main-footer"></footer>
+/* ================================
+HEADER / MENU
+================================ */
 
-    <script src="js/menu.js"></script>
-    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            if (typeof AOS !== 'undefined') {
-                AOS.init({ duration: 1000, once: true });
-            }
-        });
-    </script>
-</body>
-</html>
+.menu-principal{
+background:#ffffff;
+border-bottom:1px solid #eee;
+}
+
+.menu-container{
+max-width:1200px;
+margin:auto;
+display:flex;
+align-items:center;
+justify-content:space-between;
+padding:15px;
+}
+
+.logo a{
+font-size:20px;
+font-weight:600;
+text-decoration:none;
+color:#222;
+}
+
+#menu-toggle{
+background:none;
+border:none;
+font-size:22px;
+cursor:pointer;
+}
+
+.menu-links{
+list-style:none;
+display:none;
+flex-direction:column;
+gap:15px;
+margin-top:15px;
+}
+
+.menu-links a{
+text-decoration:none;
+color:#333;
+font-weight:500;
+}
+
+
+/* ================================
+HERO
+================================ */
+
+.hero{
+text-align:center;
+padding:40px 20px;
+}
+
+.perfil-img{
+width:150px;
+height:150px;
+border-radius:50%;
+object-fit:cover;
+margin-bottom:15px;
+}
+
+.hero h1{
+font-size:32px;
+margin-bottom:10px;
+}
+
+.subtitulo{
+font-size:18px;
+color:#555;
+}
+
+
+/* ================================
+SEÇÕES
+================================ */
+
+section{
+max-width:1100px;
+margin:auto;
+padding:40px 20px;
+}
+
+h2{
+font-size:26px;
+margin-bottom:15px;
+}
+
+p{
+margin-bottom:10px;
+}
+
+
+/* ================================
+CAROUSEL
+================================ */
+
+.carousel-container{
+position:relative;
+overflow:hidden;
+max-width:600px;
+margin:auto;
+}
+
+.carousel-slides{
+display:flex;
+transition:transform .5s ease;
+}
+
+.slide{
+min-width:100%;
+}
+
+.slide img{
+width:100%;
+border-radius:10px;
+}
+
+.carousel-btn{
+position:absolute;
+top:50%;
+transform:translateY(-50%);
+background:#ffffffcc;
+border:none;
+padding:10px;
+cursor:pointer;
+font-size:18px;
+}
+
+.prev{
+left:10px;
+}
+
+.next{
+right:10px;
+}
+
+
+/* ================================
+CARDS
+================================ */
+
+.card-grid{
+display:grid;
+grid-template-columns:1fr;
+gap:20px;
+margin-top:20px;
+}
+
+.card{
+background:white;
+padding:20px;
+border-radius:10px;
+box-shadow:0 2px 8px rgba(0,0,0,0.05);
+text-align:center;
+}
+
+.card a{
+display:inline-block;
+margin-top:10px;
+color:#0044ff;
+font-weight:600;
+text-decoration:none;
+}
+
+
+/* ================================
+FORMULÁRIOS
+================================ */
+
+form{
+display:flex;
+flex-direction:column;
+gap:10px;
+max-width:500px;
+}
+
+input, textarea, select{
+padding:10px;
+border:1px solid #ccc;
+border-radius:6px;
+font-size:14px;
+}
+
+textarea{
+min-height:100px;
+}
+
+button{
+padding:12px;
+border:none;
+background:#0044ff;
+color:white;
+font-size:16px;
+border-radius:6px;
+cursor:pointer;
+}
+
+button:hover{
+background:#0033cc;
+}
+
+
+/* ================================
+LISTA PRAÇAS
+================================ */
+
+.card-praca{
+background:white;
+padding:15px;
+margin-bottom:15px;
+border-radius:8px;
+box-shadow:0 2px 6px rgba(0,0,0,0.05);
+}
+
+
+/* ================================
+FOOTER
+================================ */
+
+footer{
+margin-top:40px;
+background:#111;
+color:white;
+padding:30px 20px;
+text-align:center;
+}
+
+.footer-content{
+max-width:1000px;
+margin:auto;
+}
+
+.social-links{
+margin-top:10px;
+}
+
+.social-links a{
+color:white;
+font-size:22px;
+margin:0 10px;
+}
+
+
+/* ================================
+RESPONSIVIDADE TABLET
+================================ */
+
+@media (min-width:768px){
+
+.menu-links{
+display:flex;
+flex-direction:row;
+margin-top:0;
+}
+
+#menu-toggle{
+display:none;
+}
+
+.hero h1{
+font-size:40px;
+}
+
+.card-grid{
+grid-template-columns:repeat(2,1fr);
+}
+
+}
+
+
+/* ================================
+RESPONSIVIDADE DESKTOP
+================================ */
+
+@media (min-width:1024px){
+
+.hero{
+padding:60px 20px;
+}
+
+.card-grid{
+grid-template-columns:repeat(3,1fr);
+}
+
+/* ================================
+FORMULÁRIO GOOGLE
+================================ */
+
+.form-container{
+width:100%;
+max-width:900px;
+margin:auto;
+}
+
+.form-container iframe{
+width:100%;
+height:1500px;
+border:none;
+border-radius:10px;
+background:white;
+}
+
+}

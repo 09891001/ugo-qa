@@ -1,183 +1,393 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Projeto Praça Pet - Ugo Ventura</title>
-    
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
 
-    <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; background-color: #f8f9fa; }
-        main { padding: 20px 15px; max-width: 1100px; margin: 0 auto; }
-        
-        .projeto-header h1 { color: blue; text-align: center; margin-bottom: 5px; }
-        .img-header { border-radius: 15px; width: 100%; max-height: 300px; object-fit: cover; display: block; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        /* Barra de Busca */
-        .search-container {
-            margin: 30px 0;
-            text-align: center;
-            position: sticky;
-            top: 10px;
-            z-index: 100;
-        }
-        #search-input {
-            width: 100%;
-            max-width: 500px;
-            padding: 12px 20px;
-            border-radius: 25px;
-            border: 2px solid blue;
-            font-size: 1rem;
-            outline: none;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
+<title>Projeto Praça Pet | Ugo Ventura</title>
 
-        /* Estilos do Fórum */
-        #forum-pets {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 25px;
-        }
-        .card-relato {
-            border: none;
-            border-radius: 15px;
-            overflow: hidden;
-            background: #fff;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-            transition: transform 0.2s;
-            display: flex;
-            flex-direction: column;
-        }
-        .card-relato:hover { transform: translateY(-5px); }
-        
-        .img-container { width: 100%; height: 200px; background: #e9ecef; overflow: hidden; }
-        .img-relato { width: 100%; height: 100%; object-fit: cover; }
-        
-        .conteudo-relato { padding: 20px; flex-grow: 1; }
-        .conteudo-relato h4 { margin: 0 0 10px; color: blue; text-transform: uppercase; font-size: 1rem; }
-        .info-item { font-size: 0.9rem; margin-bottom: 8px; color: #444; }
-        
-        .tag-conservacao {
-            display: inline-block;
-            background: #eef2ff;
-            color: blue;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: bold;
-            margin-top: 10px;
-        }
+<meta name="description" content="Projeto comunitário para avaliar praças pet e sugerir melhorias">
 
-        .btn-acao {
-            display: inline-block;
-            text-decoration: none;
-            background: blue;
-            color: white;
-            text-align: center;
-            padding: 12px 25px;
-            border-radius: 30px;
-            font-weight: bold;
-            margin: 20px 0;
-            transition: opacity 0.2s;
-        }
-        .btn-acao:hover { opacity: 0.8; }
-    </style>
+<link rel="stylesheet" href="css/style.css">
+
+<link
+rel="stylesheet"
+href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+/>
+
+<script
+src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
+</script>
+
 </head>
-<body>
 
-    <header id="main-header"></header>
 
-    <main>
-        <section class="projeto-header" data-aos="fade-down">
-            <img src="https://images.unsplash.com/photo-1598133894008-61f7fdb8cc3a?auto=format&fit=crop&w=800&q=80" class="img-header">
-            <h1>Mapeamento das Praças Públicas 🐾</h1>
-            <center>
-                <a href="https://docs.google.com/forms/d/e/1FAIpQLSd1_lme-SfNuk9jrCskzSa_jjmT0-1IQWZY3ox0mP19o7jP1A/viewform" 
-                   target="_blank" class="btn-acao">
-                   <i class="fas fa-plus"></i> ENVIAR NOVO RELATO
-                </a>
-            </center>
-        </section>
+<body data-cy="pagina-projetos">
 
-        <div class="search-container">
-            <input type="text" id="search-input" placeholder="🔍 Digite o nome da praça ou bairro..." onkeyup="filtrarRelatos()">
-        </div>
+<header data-cy="header-principal">
 
-        <section id="lista-relatos" data-aos="fade-up">
-            <div id="forum-pets">Carregando informações da comunidade...</div>
-        </section>
-    </main>
+<h1 data-cy="titulo-projeto">Projeto Praça Pet</h1>
 
-    <script>
-        const sheetId = '1raQ49At3U05o1c5sGCpzH_M1kQYxZhxB7dGAOysIquA';
-        const sheetUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json`;
-        let todosOsRelatos = []; // Armazena os dados globalmente para o filtro
+<p data-cy="descricao-projeto">
+Iniciativa comunitária para avaliar praças com espaço para animais
+e sugerir melhorias para a cidade.
+</p>
 
-        async function carregarRelatos() {
-            try {
-                const response = await fetch(sheetUrl);
-                const text = await response.text();
-                const json = JSON.parse(text.substr(47).slice(0, -2));
-                todosOsRelatos = json.table.rows.slice(1); // Pula o cabeçalho
-                renderizarCards(todosOsRelatos);
-            } catch (e) {
-                document.getElementById('forum-pets').innerHTML = "<p>Erro ao carregar dados. Verifique a publicação da planilha.</p>";
-            }
-        }
+</header>
 
-        function renderizarCards(dadosParaExibir) {
-            const container = document.getElementById('forum-pets');
-            if (dadosParaExibir.length === 0) {
-                container.innerHTML = "<p style='grid-column: 1/-1; text-align: center;'>Nenhuma praça encontrada com esse nome.</p>";
-                return;
-            }
 
-            let html = '';
-            // Inverte para os mais novos aparecerem primeiro
-            [...dadosParaExibir].reverse().forEach(row => {
-                const d = row.c;
-                const nomeTutor = d[1] ? d[1].v : 'Anônimo';
-                const nomePraca = d[3] ? d[3].v : 'Praça não identificada';
-                const endereco = d[4] ? d[4].v : '';
-                const conservacao = d[7] ? d[7].v : 'Não avaliado';
-                const fotoUrl = d[18] ? d[18].v : '';
+<main>
 
-                let imgHtml = '<img src="https://via.placeholder.com/400x250?text=Sem+Foto" class="img-relato">';
-                if (fotoUrl && fotoUrl.includes('id=')) {
-                    const id = fotoUrl.split('id=')[1].split('&')[0].split(',')[0];
-                    imgHtml = `<img src="https://drive.google.com/uc?export=view&id=${id}" class="img-relato">`;
-                }
+<section class="upload-section" data-cy="secao-upload">
 
-                html += `
-                    <article class="card-relato">
-                        <div class="img-container">${imgHtml}</div>
-                        <div class="conteudo-relato">
-                            <h4>${nomePraca}</h4>
-                            <div class="info-item"><i class="fas fa-map-marker-alt"></i> ${endereco}</div>
-                            <div class="info-item"><strong>Por:</strong> ${nomeTutor}</div>
-                            <span class="tag-status tag-conservacao">Estado: ${conservacao}</span>
-                        </div>
-                    </article>
-                `;
-            });
-            container.innerHTML = html;
-        }
+<h2>Enviar foto da praça</h2>
 
-        // Lógica do Filtro
-        function filtrarRelatos() {
-            const termoBusca = document.getElementById('search-input').value.toLowerCase();
-            const relatosFiltrados = todosOsRelatos.filter(row => {
-                const praca = row.c[3] ? row.c[3].v.toLowerCase() : '';
-                const endereco = row.c[4] ? row.c[4].v.toLowerCase() : '';
-                return praca.includes(termoBusca) || endereco.includes(termoBusca);
-            });
-            renderizarCards(relatosFiltrados);
-        }
+<label for="foto-praca">Selecionar foto</label>
 
-        document.addEventListener('DOMContentLoaded', carregarRelatos);
-    </script>
+<input
+type="file"
+id="foto-praca"
+accept="image/png,image/jpeg,image/webp"
+data-cy="input-foto">
+
+<p id="upload-status" data-cy="status-upload"></p>
+
+<label for="foto-url">Link da imagem enviada</label>
+
+<input
+type="text"
+id="foto-url"
+readonly
+data-cy="url-imagem">
+
+<img
+id="preview-imagem"
+alt="Pré visualização da imagem enviada"
+style="display:none; max-width:100%; margin-top:10px;"
+data-cy="preview-imagem">
+
+</section>
+
+
+
+<section class="formulario" data-cy="secao-formulario">
+
+<h2>Enviar Avaliação</h2>
+
+<p>Preencha o formulário abaixo para avaliar a praça.</p>
+
+<div class="form-container">
+
+<iframe
+src="https://docs.google.com/forms/d/e/1FAIpQLSd1_lme-SfNuk9jrCskzSa_jjmT0-1IQWZY3ox0mP19o7jP1A/viewform?embedded=true"
+title="Formulário avaliação praça pet"
+loading="lazy"
+width="100%"
+height="1200"
+frameborder="0"
+data-cy="formulario-google">
+
+Carregando formulário...
+
+</iframe>
+
+</div>
+
+</section>
+
+
+
+<section class="buscar-praca" data-cy="secao-busca">
+
+<h2>Praças Avaliadas</h2>
+
+<label for="buscar-praca">Buscar praça</label>
+
+<input
+type="search"
+id="buscar-praca"
+placeholder="Digite o endereço da praça"
+data-cy="input-busca">
+
+</section>
+
+
+
+<section class="lista-avaliacoes" data-cy="secao-avaliacoes">
+
+<div
+id="lista-avaliacoes"
+aria-live="polite"
+data-cy="lista-avaliacoes">
+
+<p>Carregando avaliações...</p>
+
+</div>
+
+</section>
+
+</main>
+
+
+
+<footer data-cy="footer-site">
+
+<p>
+© 2026 Ugo Ventura - QA de Acessibilidade
+</p>
+
+</footer>
+
+
+
+<script src="js/upload-foto.js"></script>
+
+
+
+<script>
+
+const URL_PLANILHA =
+"https://opensheet.elk.sh/1raQ49At3U05o1c5sGCpzH_M1kQYxZhxB7dGAOysIquA/Sheet1"
+
+let dados = []
+
+document.addEventListener("DOMContentLoaded", iniciar)
+
+function iniciar(){
+
+carregarAvaliacoes()
+
+const campoBusca =
+document.getElementById("buscar-praca")
+
+if(campoBusca){
+
+campoBusca.addEventListener("input", function(){
+
+filtrarPracas(this.value)
+
+})
+
+}
+
+}
+
+
+
+async function carregarAvaliacoes(){
+
+const container =
+document.getElementById("lista-avaliacoes")
+
+try{
+
+const resposta =
+await fetch(URL_PLANILHA)
+
+if(!resposta.ok){
+
+throw new Error("Erro ao acessar planilha")
+
+}
+
+const json =
+await resposta.json()
+
+dados = json || []
+
+renderizarLista(dados)
+
+}catch(erro){
+
+container.innerHTML =
+"<p>Não foi possível carregar avaliações.</p>"
+
+console.error("Erro ao carregar planilha:", erro)
+
+}
+
+}
+
+
+
+function renderizarLista(lista){
+
+const container =
+document.getElementById("lista-avaliacoes")
+
+if(!lista || !lista.length){
+
+container.innerHTML =
+"<p>Nenhuma avaliação encontrada.</p>"
+
+return
+
+}
+
+container.innerHTML =
+lista.map((item,index) => {
+
+return `
+
+<article class="card-praca" data-cy="card-praca">
+
+<h3 data-cy="nome-tutor">
+${item.tutor || "Tutor não informado"}
+</h3>
+
+<p>
+<strong>Endereço da praça:</strong>
+<span data-cy="endereco-praca">
+${item.endereco || "-"}
+</span>
+</p>
+
+<p data-cy="observacoes">
+${item.observacoes || ""}
+</p>
+
+${item.foto ?
+`<img src="${item.foto}"
+alt="Foto enviada da praça"
+class="foto-praca"
+data-cy="foto-praca">`
+: ""}
+
+<p>
+<strong>Contato:</strong>
+<span data-cy="contato">
+${item.whatsapp || ""}
+</span>
+</p>
+
+<div
+class="mapa-praca"
+id="mapa-${index}"
+role="region"
+aria-label="Mapa da localização da praça"
+tabindex="0"
+style="height:300px;margin-top:10px;"
+data-cy="mapa-praca">
+</div>
+
+</article>
+
+`
+
+}).join("")
+
+iniciarMapas(lista)
+
+}
+
+
+
+async function iniciarMapas(lista){
+
+for(let i=0;i<lista.length;i++){
+
+const endereco =
+lista[i].endereco
+
+if(!endereco) continue
+
+try{
+
+const coords =
+await buscarCoordenadas(endereco)
+
+if(coords){
+
+criarMapa(`mapa-${i}`,coords.lat,coords.lon)
+
+}
+
+}catch(e){
+
+console.warn("Erro ao buscar coordenadas:",e)
+
+}
+
+}
+
+}
+
+
+
+async function buscarCoordenadas(endereco){
+
+const url =
+`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(endereco)}`
+
+const resposta =
+await fetch(url)
+
+const dados =
+await resposta.json()
+
+if(!dados.length) return null
+
+return {
+
+lat: dados[0].lat,
+lon: dados[0].lon
+
+}
+
+}
+
+
+
+function criarMapa(idMapa,lat,lon){
+
+try{
+
+const mapa =
+L.map(idMapa).setView([lat,lon],16)
+
+L.tileLayer(
+"https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+{
+maxZoom:19,
+attribution:"© OpenStreetMap"
+}
+).addTo(mapa)
+
+L.marker([lat,lon])
+.addTo(mapa)
+.bindPopup("Local da praça")
+
+}catch(e){
+
+console.warn("Erro ao criar mapa:",e)
+
+}
+
+}
+
+
+
+function filtrarPracas(texto){
+
+const termo =
+(texto || "").toLowerCase()
+
+const filtrado =
+dados.filter(p => {
+
+return (p.endereco || "")
+.toLowerCase()
+.includes(termo)
+
+})
+
+renderizarLista(filtrado)
+
+}
+
+</script>
+
 </body>
 </html>
