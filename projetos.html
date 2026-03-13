@@ -9,9 +9,9 @@
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
     <style>
-        /* Melhorias visuais e de espaçamento */
+        /* Estilos de Acessibilidade e Layout */
         #lista-avaliacoes { 
             display: flex; 
             flex-direction: column; 
@@ -23,7 +23,7 @@
             border-radius: 15px;
             padding: 25px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-            border-left: 6px solid #0000FF; /* Azul Ugo para destaque */
+            border-left: 6px solid #0000FF;
             margin-bottom: 10px;
         }
         .foto-praca {
@@ -37,6 +37,26 @@
             border-radius: 10px; 
             border: 1px solid #ddd; 
             background-color: #f0f0f0;
+        }
+        .instrucoes-upload {
+            background: #f0f4ff; 
+            padding: 20px; 
+            border-radius: 10px; 
+            margin-bottom: 20px; 
+            border-left: 5px solid #0000FF;
+        }
+        .botao-copiar {
+            background-color: #0000FF;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        .botao-copiar:hover {
+            background-color: #000099;
         }
         h3 i { margin-right: 10px; color: #0000FF; }
         p i { margin-right: 8px; color: #555; }
@@ -54,18 +74,37 @@
 
 <main>
     <section class="upload-section" data-cy="secao-upload">
-        <h2>Enviar foto da praça</h2>
-        <label for="foto-praca">Selecionar foto</label>
+        <h2>1. Envie a foto da praça</h2>
+        
+        <div class="instrucoes-upload" role="note" aria-label="Instruções de uso">
+            <p><strong>Siga estes 3 passos para sua foto aparecer no site:</strong></p>
+            <ol>
+                <li>Clique em "Selecionar foto" e escolha a imagem.</li>
+                <li>Quando o link aparecer, clique no botão <strong>"Copiar Link da Foto"</strong>.</li>
+                <li>Cole esse link no campo de foto do <strong>Formulário de Avaliação</strong> logo abaixo.</li>
+            </ol>
+        </div>
+
+        <label for="foto-praca">Selecionar arquivo de imagem</label>
         <input type="file" id="foto-praca" accept="image/png,image/jpeg,image/webp" data-cy="input-foto">
-        <p id="upload-status" data-cy="status-upload"></p>
-        <label for="foto-url">Link da imagem enviada</label>
-        <input type="text" id="foto-url" readonly data-cy="url-imagem">
-        <img id="preview-imagem" alt="Pré visualização da imagem enviada" style="display:none; max-width:100%; margin-top:10px;" data-cy="preview-imagem">
+        
+        <p id="upload-status" data-cy="status-upload" aria-live="polite"></p>
+        
+        <label for="foto-url">Link da imagem gerado:</label>
+        <div style="display: flex; flex-direction: column; gap: 5px;">
+            <input type="text" id="foto-url" readonly data-cy="url-imagem" 
+                   style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; background: #eee;">
+            <button type="button" class="botao-copiar" id="btn-copiar" title="Copiar link para a área de transferência">
+                <i class="fas fa-copy"></i> Copiar Link da Foto
+            </button>
+        </div>
+        
+        <img id="preview-imagem" alt="Pré-visualização da imagem enviada" style="display:none; max-width:100%; margin-top:15px; border-radius: 10px;" data-cy="preview-imagem">
     </section>
 
     <section class="formulario" data-cy="secao-formulario">
-        <h2>Enviar Avaliação</h2>
-        <p>Preencha o formulário abaixo para avaliar a praça.</p>
+        <h2>2. Enviar Avaliação</h2>
+        <p>Preencha os dados da praça e cole o link da foto gerado acima.</p>
         <div class="form-container">
             <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSd1_lme-SfNuk9jrCskzSa_jjmT0-1IQWZY3ox0mP19o7jP1A/viewform?embedded=true"
                     title="Formulário avaliação praça pet" loading="lazy" width="100%" height="1200" frameborder="0" data-cy="formulario-google">
@@ -102,12 +141,29 @@
 
     function iniciar() {
         carregarAvaliacoes();
+        configurarBotaoCopiar();
         const campoBusca = document.getElementById("buscar-praca");
         if (campoBusca) {
             campoBusca.addEventListener("input", function() {
                 filtrarPracas(this.value);
             });
         }
+    }
+
+    function configurarBotaoCopiar() {
+        const btn = document.getElementById("btn-copiar");
+        const input = document.getElementById("foto-url");
+        
+        btn.addEventListener("click", () => {
+            if (input.value) {
+                input.select();
+                input.setSelectionRange(0, 99999); // Para dispositivos móveis
+                navigator.clipboard.writeText(input.value);
+                alert("Link copiado! Agora cole-o no campo de foto do formulário abaixo.");
+            } else {
+                alert("Primeiro faça o upload de uma foto.");
+            }
+        });
     }
 
     async function carregarAvaliacoes() {
@@ -117,9 +173,9 @@
             const texto = await resposta.text();
             const jsonLimpo = JSON.parse(texto.substring(47, texto.length - 2));
             
-            // FILTRO (A TRAVA): Só aceita linhas onde a Coluna A e B não estão vazias
+            // Trava de segurança para linhas vazias
             const linhasFiltradas = jsonLimpo.table.rows.filter(row => {
-                return row.c[0] && row.c[0].v && row.c[1] && row.c[1].v;
+                return row.c && row.c[0] && row.c[0].v && row.c[1] && row.c[1].v;
             });
 
             dados = linhasFiltradas.map(row => {
@@ -129,10 +185,10 @@
                     endereco: r[1] ? r[1].v : "",
                     observacoes: r[2] ? r[2].v : "",
                     whatsapp: r[4] ? r[4].v : "",
-                    foto: r[5] ? r[5].v : ""
+                    // r[6] representa a Coluna G, onde o link da foto está agora
+                    foto: (r[6] && r[6].v) ? r[6].v : "" 
                 };
             });
-
             renderizarLista(dados);
         } catch (erro) {
             container.innerHTML = "<p style='text-align:center;'>Erro ao carregar relatos. Verifique a planilha.</p>";
@@ -143,7 +199,7 @@
     function renderizarLista(lista) {
         const container = document.getElementById("lista-avaliacoes");
         if (!lista || !lista.length) {
-            container.innerHTML = "<p style='text-align:center;'>Nenhuma avaliação preenchida encontrada.</p>";
+            container.innerHTML = "<p style='text-align:center;'>Nenhuma avaliação encontrada.</p>";
             return;
         }
 
