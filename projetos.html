@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <style>
-        /* Estilos para garantir divisões claras entre os relatos */
+        /* Melhorias visuais e de espaçamento */
         #lista-avaliacoes { 
             display: flex; 
             flex-direction: column; 
@@ -24,6 +24,7 @@
             padding: 25px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.08);
             border-left: 6px solid #0000FF; /* Azul Ugo para destaque */
+            margin-bottom: 10px;
         }
         .foto-praca {
             width: 100%;
@@ -35,7 +36,10 @@
         .mapa-praca { 
             border-radius: 10px; 
             border: 1px solid #ddd; 
+            background-color: #f0f0f0;
         }
+        h3 i { margin-right: 10px; color: #0000FF; }
+        p i { margin-right: 8px; color: #555; }
     </style>
 </head>
 
@@ -91,7 +95,6 @@
 <script src="js/upload-foto.js"></script>
 
 <script>
-    // URL OFICIAL DO GOOGLE (FORMATO JSON VIZ)
     const URL_PLANILHA = "https://docs.google.com/spreadsheets/d/1raQ49At3U05o1c5sGCpzH_M1kQYxZhxB7dGAOysIquA/gviz/tq?tqx=out:json&sheet=respostas";
     let dados = [];
 
@@ -112,12 +115,14 @@
         try {
             const resposta = await fetch(URL_PLANILHA);
             const texto = await resposta.text();
-            
-            // Tratamento essencial para o formato do Google
             const jsonLimpo = JSON.parse(texto.substring(47, texto.length - 2));
             
-            // Mapeia as linhas da planilha para o formato do site
-            dados = jsonLimpo.table.rows.map(row => {
+            // FILTRO (A TRAVA): Só aceita linhas onde a Coluna A e B não estão vazias
+            const linhasFiltradas = jsonLimpo.table.rows.filter(row => {
+                return row.c[0] && row.c[0].v && row.c[1] && row.c[1].v;
+            });
+
+            dados = linhasFiltradas.map(row => {
                 const r = row.c;
                 return {
                     tutor: r[0] ? r[0].v : "Anônimo",
@@ -138,7 +143,7 @@
     function renderizarLista(lista) {
         const container = document.getElementById("lista-avaliacoes");
         if (!lista || !lista.length) {
-            container.innerHTML = "<p style='text-align:center;'>Nenhuma avaliação encontrada.</p>";
+            container.innerHTML = "<p style='text-align:center;'>Nenhuma avaliação preenchida encontrada.</p>";
             return;
         }
 
@@ -147,8 +152,8 @@
                 <article class="card-praca" data-cy="card-praca">
                     <h3 data-cy="nome-tutor"><i class="fas fa-user-circle"></i> ${item.tutor}</h3>
                     <p><strong><i class="fas fa-map-marker-alt"></i> Endereço:</strong> 
-                       <span data-cy="endereco-praca">${item.endereco || "-"}</span></p>
-                    <p data-cy="observacoes"><strong>Observações:</strong> ${item.observacoes}</p>
+                       <span data-cy="endereco-praca">${item.endereco}</span></p>
+                    <p data-cy="observacoes"><strong><i class="fas fa-comment-alt"></i> Observações:</strong> ${item.observacoes || "Sem observações."}</p>
                     ${item.foto ? `<img src="${item.foto}" alt="Foto da praça" class="foto-praca" data-cy="foto-praca">` : ""}
                     <p><strong><i class="fab fa-whatsapp"></i> Contato:</strong> ${item.whatsapp || "Não informado"}</p>
                     <div class="mapa-praca" id="mapa-${index}" role="region" aria-label="Mapa da praça" style="height:300px;margin-top:15px;"></div>
@@ -179,10 +184,14 @@
     }
 
     async function buscarCoordenadas(endereco) {
-        const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(endereco)}`;
-        const resposta = await fetch(url);
-        const d = await resposta.json();
-        return d.length ? { lat: d[0].lat, lon: d[0].lon } : null;
+        try {
+            const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(endereco)}`;
+            const resposta = await fetch(url);
+            const d = await resposta.json();
+            return d.length ? { lat: d[0].lat, lon: d[0].lon } : null;
+        } catch (error) {
+            return null;
+        }
     }
 
     function filtrarPracas(texto) {
