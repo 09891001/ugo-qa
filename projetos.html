@@ -17,6 +17,7 @@
             padding: 25px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.08);
             border-left: 6px solid #0000FF;
+            margin-bottom: 20px;
         }
         .foto-praca {
             width: 100%;
@@ -25,27 +26,16 @@
             border-radius: 10px;
             margin: 15px 0;
             display: block;
+            background-color: #f9f9f9;
         }
-        .mapa-praca { border-radius: 10px; border: 1px solid #ddd; background-color: #f0f0f0; }
-        .instrucoes-upload {
-            background: #f0f4ff; 
-            padding: 20px; 
-            border-radius: 10px; 
-            margin-bottom: 20px; 
-            border-left: 5px solid #0000FF;
-        }
+        .mapa-praca { border-radius: 10px; border: 1px solid #ddd; height: 300px; margin-top: 15px; }
         .botao-copiar {
-            background-color: #0000FF;
-            color: white;
-            border: none;
-            padding: 12px;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-top: 10px;
-            font-weight: bold;
-            width: 100%;
+            background-color: #0000FF; color: white; border: none; padding: 12px;
+            border-radius: 5px; cursor: pointer; margin-top: 10px; font-weight: bold; width: 100%;
+            display: flex; align-items: center; justify-content: center; gap: 10px;
         }
-        h3 i { margin-right: 10px; color: #0000FF; }
+        .instrucoes { background: #f0f4ff; padding: 20px; border-radius: 10px; margin-bottom: 20px; border-left: 5px solid #0000FF; }
+        h3 i, p i { color: #0000FF; margin-right: 8px; }
     </style>
 </head>
 
@@ -53,44 +43,39 @@
 
 <header>
     <h1>Projeto Praça Pet</h1>
-    <p>Iniciativa de Ugo Ventura para mapeamento e acessibilidade de praças.</p>
+    <p>Mapeamento e Avaliação de Praças - Ugo Ventura</p>
 </header>
 
 <main>
     <section class="upload-section">
         <h2>1. Envie a foto da praça</h2>
-        <div class="instrucoes-upload" role="note">
-            <p><strong>Passo a passo:</strong></p>
+        <div class="instrucoes" role="note">
+            <p><strong>Siga estes passos:</strong></p>
             <ol>
-                <li>Selecione a foto abaixo.</li>
-                <li>Clique no botão azul <strong>"Copiar Link da Foto"</strong>.</li>
-                <li>Cole no campo de foto do formulário abaixo.</li>
+                <li>Selecione a foto no botão abaixo.</li>
+                <li>Clique no botão <strong>"Copiar Link da Foto"</strong>.</li>
+                <li>Cole no campo específico do formulário abaixo.</li>
             </ol>
         </div>
-
         <input type="file" id="foto-praca" accept="image/*">
         <p id="upload-status" aria-live="polite"></p>
-        
-        <label for="foto-url">Link gerado para copiar:</label>
-        <input type="text" id="foto-url" readonly style="width: 100%; padding: 10px; background: #eee; border: 1px solid #ccc;">
+        <input type="text" id="foto-url" readonly placeholder="O link aparecerá aqui..." style="width: 100%; padding: 10px; background: #eee; border: 1px solid #ccc; margin-top: 10px;">
         <button type="button" class="botao-copiar" id="btn-copiar">
             <i class="fas fa-copy"></i> Copiar Link da Foto
         </button>
-        
         <img id="preview-imagem" alt="Pré-visualização" style="display:none; max-width:100%; margin-top:15px; border-radius: 10px;">
     </section>
 
     <section class="formulario">
         <h2>2. Preencha a Avaliação</h2>
         <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSd1_lme-SfNuk9jrCskzSa_jjmT0-1IQWZY3ox0mP19o7jP1A/viewform?embedded=true"
-                width="100%" height="1000" frameborder="0">Carregando...</iframe>
+                width="100%" height="1000" frameborder="0">Carregando formulário...</iframe>
     </section>
 
     <section>
         <h2>Praças Avaliadas</h2>
-        <input type="search" id="buscar-praca" placeholder="Buscar por endereço..." style="width:100%; padding:10px; margin-bottom:20px;">
         <div id="lista-avaliacoes" aria-live="polite">
-            <p style="text-align:center;">Carregando avaliações...</p>
+            <p style="text-align:center;">Sincronizando dados...</p>
         </div>
     </section>
 </main>
@@ -104,25 +89,20 @@
 
 <script>
     const URL_PLANILHA = "https://docs.google.com/spreadsheets/d/1raQ49At3U05o1c5sGCpzH_M1kQYxZhxB7dGAOysIquA/gviz/tq?tqx=out:json&sheet=respostas";
-    let dadosCache = [];
 
     document.addEventListener("DOMContentLoaded", () => {
         carregarDados();
-        configurarCopia();
-        document.getElementById("buscar-praca").addEventListener("input", e => filtrar(e.target.value));
-    });
-
-    function configurarCopia() {
         document.getElementById("btn-copiar").addEventListener("click", () => {
-            const url = document.getElementById("foto-url");
-            if (url.value) {
-                navigator.clipboard.writeText(url.value);
-                alert("Link copiado! Cole-o no formulário abaixo.");
+            const urlInput = document.getElementById("foto-url");
+            if (urlInput.value) {
+                urlInput.select();
+                navigator.clipboard.writeText(urlInput.value);
+                alert("Link copiado! Cole-o na pergunta 'Cole aqui o link da foto' no formulário.");
             } else {
-                alert("Primeiro, selecione uma foto.");
+                alert("Por favor, faça o upload da foto primeiro.");
             }
         });
-    }
+    });
 
     async function carregarDados() {
         try {
@@ -130,61 +110,58 @@
             const texto = await res.text();
             const json = JSON.parse(texto.substring(47, texto.length - 2));
             
-            // Filtro para ignorar linhas sem nome (Coluna B / r[1])
+            // Filtra para mostrar apenas linhas que têm o nome do tutor (Coluna B / r[1])
             const linhas = json.table.rows.filter(row => row.c && row.c[1] && row.c[1].v);
 
-            dadosCache = linhas.map(row => {
+            const container = document.getElementById("lista-avaliacoes");
+            container.innerHTML = linhas.map((row, i) => {
                 const r = row.c;
-                return {
-                    tutor: r[1] ? r[1].v : "Anônimo",
+                // Mapeamento exato das colunas da sua planilha atual
+                const item = {
+                    tutor: r[1] ? r[1].v : "Não informado",
                     whatsapp: r[2] ? r[2].v : "Não informado",
-                    endereco: r[3] ? r[3].v : "Endereço não informado",
-                    // Coluna G (índice 6) é onde está o link da foto
+                    endereco: r[3] ? r[3].v : "Não informado",
+                    // r[6] é a Coluna G (Link da Foto)
                     foto: (r[6] && r[6].v) ? r[6].v : "",
-                    // Coluna H (índice 7) são os comentários
+                    // r[7] é a Coluna H (Sugestões/Comentários)
                     comentarios: r[7] ? r[7].v : "Sem observações."
                 };
+
+                return `
+                    <article class="card-praca">
+                        <h3><i class="fas fa-user"></i> Nome: ${item.tutor}</h3>
+                        <p><strong><i class="fas fa-phone"></i> Telefone com Whatsapp:</strong> ${item.whatsapp}</p>
+                        <p><strong><i class="fas fa-map-marker-alt"></i> Nome da praça ou endereço:</strong> ${item.endereco}</p>
+                        <p><strong><i class="fas fa-comment"></i> Sugestão ou comentário:</strong> ${item.comentarios}</p>
+                        ${item.foto ? `<img src="${item.foto}" alt="Foto da praça" class="foto-praca" onerror="this.style.display='none'">` : ""}
+                        <div id="map-${i}" class="mapa-praca"></div>
+                    </article>
+                `;
+            }).reverse().join(""); // .reverse() para mostrar a mais recente primeiro
+
+            // Inicia os mapas
+            linhas.reverse().forEach((row, i) => {
+                const end = row.c[3] ? row.c[3].v : null;
+                if (end) gerarMapa(`map-${i}`, end);
             });
-            renderizar(dadosCache);
+
         } catch (e) {
-            console.error("Erro QA:", e);
-            document.getElementById("lista-avaliacoes").innerHTML = "<p>Erro ao carregar dados.</p>";
+            document.getElementById("lista-avaliacoes").innerHTML = "<p>Erro ao carregar dados da planilha.</p>";
         }
     }
 
-    function renderizar(lista) {
-        const container = document.getElementById("lista-avaliacoes");
-        container.innerHTML = lista.map((item, i) => `
-            <article class="card-praca">
-                <h3><i class="fas fa-user-circle"></i> ${item.tutor}</h3>
-                <p><strong><i class="fas fa-map-marker-alt"></i> Endereço:</strong> ${item.endereco}</p>
-                <p><strong><i class="fas fa-comment-alt"></i> Sugestão:</strong> ${item.comentarios}</p>
-                ${item.foto ? `<img src="${item.foto}" alt="Foto da praça" class="foto-praca">` : ""}
-                <p><strong><i class="fab fa-whatsapp"></i> Contato:</strong> ${item.whatsapp}</p>
-                <div id="map-${i}" class="mapa-praca" style="height:300px; margin-top:15px;"></div>
-            </article>
-        `).join("");
-
-        lista.forEach((item, i) => {
-            if (item.endereco) carregarMapa(`map-${i}`, item.endereco);
-        });
-    }
-
-    async function carregarMapa(id, endereco) {
+    async function gerarMapa(id, endereco) {
         try {
             const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(endereco)}`);
             const d = await res.json();
             if (d.length) {
                 const map = L.map(id).setView([d[0].lat, d[0].lon], 16);
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '© OpenStreetMap'
+                }).addTo(map);
                 L.marker([d[0].lat, d[0].lon]).addTo(map);
             }
-        } catch (e) { console.warn("Mapa indisponível"); }
-    }
-
-    function filtrar(termo) {
-        const filtrados = dadosCache.filter(d => d.endereco.toLowerCase().includes(termo.toLowerCase()));
-        renderizar(filtrados);
+        } catch (e) { }
     }
 </script>
 
