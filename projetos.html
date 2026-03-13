@@ -1,392 +1,195 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projeto Praça Pet | Ugo Ventura</title>
+    <meta name="description" content="Projeto comunitário para avaliar praças pet e sugerir melhorias">
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-<title>Projeto Praça Pet | Ugo Ventura</title>
-
-<meta name="description" content="Projeto comunitário para avaliar praças pet e sugerir melhorias">
-
-<link rel="stylesheet" href="css/style.css">
-
-<link
-rel="stylesheet"
-href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-/>
-
-<script
-src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
-</script>
-
+    <style>
+        /* Estilos para garantir divisões claras entre os relatos */
+        #lista-avaliacoes { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 40px; 
+            padding: 20px 0; 
+        }
+        .card-praca {
+            background: #fff;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            border-left: 6px solid #0000FF; /* Azul Ugo para destaque */
+        }
+        .foto-praca {
+            width: 100%;
+            max-height: 400px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin: 15px 0;
+        }
+        .mapa-praca { 
+            border-radius: 10px; 
+            border: 1px solid #ddd; 
+        }
+    </style>
 </head>
-
 
 <body data-cy="pagina-projetos">
 
 <header data-cy="header-principal">
-
-<h1 data-cy="titulo-projeto">Projeto Praça Pet</h1>
-
-<p data-cy="descricao-projeto">
-Iniciativa comunitária para avaliar praças com espaço para animais
-e sugerir melhorias para a cidade.
-</p>
-
+    <h1 data-cy="titulo-projeto">Projeto Praça Pet</h1>
+    <p data-cy="descricao-projeto">
+        Iniciativa comunitária para avaliar praças com espaço para animais e sugerir melhorias.
+    </p>
 </header>
 
-
 <main>
+    <section class="upload-section" data-cy="secao-upload">
+        <h2>Enviar foto da praça</h2>
+        <label for="foto-praca">Selecionar foto</label>
+        <input type="file" id="foto-praca" accept="image/png,image/jpeg,image/webp" data-cy="input-foto">
+        <p id="upload-status" data-cy="status-upload"></p>
+        <label for="foto-url">Link da imagem enviada</label>
+        <input type="text" id="foto-url" readonly data-cy="url-imagem">
+        <img id="preview-imagem" alt="Pré visualização da imagem enviada" style="display:none; max-width:100%; margin-top:10px;" data-cy="preview-imagem">
+    </section>
 
-<section class="upload-section" data-cy="secao-upload">
+    <section class="formulario" data-cy="secao-formulario">
+        <h2>Enviar Avaliação</h2>
+        <p>Preencha o formulário abaixo para avaliar a praça.</p>
+        <div class="form-container">
+            <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSd1_lme-SfNuk9jrCskzSa_jjmT0-1IQWZY3ox0mP19o7jP1A/viewform?embedded=true"
+                    title="Formulário avaliação praça pet" loading="lazy" width="100%" height="1200" frameborder="0" data-cy="formulario-google">
+                Carregando formulário...
+            </iframe>
+        </div>
+    </section>
 
-<h2>Enviar foto da praça</h2>
+    <section class="buscar-praca" data-cy="secao-busca">
+        <h2>Praças Avaliadas</h2>
+        <label for="buscar-praca">Buscar praça por endereço</label>
+        <input type="search" id="buscar-praca" placeholder="Digite o endereço da praça" data-cy="input-busca">
+    </section>
 
-<label for="foto-praca">Selecionar foto</label>
-
-<input
-type="file"
-id="foto-praca"
-accept="image/png,image/jpeg,image/webp"
-data-cy="input-foto">
-
-<p id="upload-status" data-cy="status-upload"></p>
-
-<label for="foto-url">Link da imagem enviada</label>
-
-<input
-type="text"
-id="foto-url"
-readonly
-data-cy="url-imagem">
-
-<img
-id="preview-imagem"
-alt="Pré visualização da imagem enviada"
-style="display:none; max-width:100%; margin-top:10px;"
-data-cy="preview-imagem">
-
-</section>
-
-
-
-<section class="formulario" data-cy="secao-formulario">
-
-<h2>Enviar Avaliação</h2>
-
-<p>Preencha o formulário abaixo para avaliar a praça.</p>
-
-<div class="form-container">
-
-<iframe
-src="https://docs.google.com/forms/d/e/1FAIpQLSd1_lme-SfNuk9jrCskzSa_jjmT0-1IQWZY3ox0mP19o7jP1A/viewform?embedded=true"
-title="Formulário avaliação praça pet"
-loading="lazy"
-width="100%"
-height="1200"
-frameborder="0"
-data-cy="formulario-google">
-
-Carregando formulário...
-
-</iframe>
-
-</div>
-
-</section>
-
-
-
-<section class="buscar-praca" data-cy="secao-busca">
-
-<h2>Praças Avaliadas</h2>
-
-<label for="buscar-praca">Buscar praça</label>
-
-<input
-type="search"
-id="buscar-praca"
-placeholder="Digite o endereço da praça"
-data-cy="input-busca">
-
-</section>
-
-
-
-<section class="lista-avaliacoes" data-cy="secao-avaliacoes">
-
-<div
-id="lista-avaliacoes"
-aria-live="polite"
-data-cy="lista-avaliacoes">
-
-<p>Carregando avaliações...</p>
-
-</div>
-
-</section>
-
+    <section class="lista-avaliacoes" data-cy="secao-avaliacoes">
+        <div id="lista-avaliacoes" aria-live="polite" data-cy="lista-avaliacoes">
+            <p style="text-align:center;">Sincronizando com a base de dados...</p>
+        </div>
+    </section>
 </main>
 
-
-
 <footer data-cy="footer-site">
-
-<p>
-© 2026 Ugo Ventura - QA de Acessibilidade
-</p>
-
+    <p>© 2026 Ugo Ventura - QA de Acessibilidade</p>
 </footer>
 
-
-
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="js/upload-foto.js"></script>
 
-
-
 <script>
-
-const URL_PLANILHA =
-"https://opensheet.elk.sh/1raQ49At3U05o1c5sGCpzH_M1kQYxZhxB7dGAOysIquA/respostas"
-
-let dados = []
-
-document.addEventListener("DOMContentLoaded", iniciar)
-
-function iniciar(){
-
-carregarAvaliacoes()
-
-const campoBusca =
-document.getElementById("buscar-praca")
-
-if(campoBusca){
-
-campoBusca.addEventListener("input", function(){
-
-filtrarPracas(this.value)
-
-})
-
-}
-
-}
-
-
-
-async function carregarAvaliacoes(){
-
-const container =
-document.getElementById("lista-avaliacoes")
-
-try{
-
-const resposta =
-await fetch(URL_PLANILHA)
-
-if(!resposta.ok){
-
-throw new Error("Erro ao acessar planilha")
-
-}
-
-const json =
-await resposta.json()
-
-dados = json || []
-
-renderizarLista(dados)
-
-}catch(erro){
-
-container.innerHTML =
-"<p>Não foi possível carregar avaliações.</p>"
-
-console.error("Erro ao carregar planilha:", erro)
-
-}
-
-}
-
-
-
-function renderizarLista(lista){
-
-const container =
-document.getElementById("lista-avaliacoes")
-
-if(!lista || !lista.length){
-
-container.innerHTML =
-"<p>Nenhuma avaliação encontrada.</p>"
-
-return
-
-}
-
-container.innerHTML =
-lista.map((item,index) => {
-
-return `
-
-<article class="card-praca" data-cy="card-praca">
-
-<h3 data-cy="nome-tutor">
-${item.tutor || "Tutor não informado"}
-</h3>
-
-<p>
-<strong>Endereço da praça:</strong>
-<span data-cy="endereco-praca">
-${item.endereco || "-"}
-</span>
-</p>
-
-<p data-cy="observacoes">
-${item.observacoes || ""}
-</p>
-
-${item.foto ?
-`<img src="${item.foto}"
-alt="Foto enviada da praça"
-class="foto-praca"
-data-cy="foto-praca">`
-: ""}
-
-<p>
-<strong>Contato:</strong>
-<span data-cy="contato">
-${item.whatsapp || ""}
-</span>
-</p>
-
-<div
-class="mapa-praca"
-id="mapa-${index}"
-role="region"
-aria-label="Mapa da localização da praça"
-tabindex="0"
-style="height:300px;margin-top:10px;"
-data-cy="mapa-praca">
-</div>
-
-</article>
-
-`
-
-}).join("")
-
-iniciarMapas(lista)
-
-}
-
-
-
-async function iniciarMapas(lista){
-
-for(let i=0;i<lista.length;i++){
-
-const endereco =
-lista[i].endereco
-
-if(!endereco) continue
-
-try{
-
-const coords =
-await buscarCoordenadas(endereco)
-
-if(coords){
-
-criarMapa(`mapa-${i}`,coords.lat,coords.lon)
-
-}
-
-}catch(e){
-
-console.warn("Erro ao buscar coordenadas:",e)
-
-}
-
-}
-
-}
-
-
-
-async function buscarCoordenadas(endereco){
-
-const url =
-`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(endereco)}`
-
-const resposta =
-await fetch(url)
-
-const dados =
-await resposta.json()
-
-if(!dados.length) return null
-
-return {
-
-lat: dados[0].lat,
-lon: dados[0].lon
-
-}
-
-}
-
-
-
-function criarMapa(idMapa,lat,lon){
-
-try{
-
-const mapa =
-L.map(idMapa).setView([lat,lon],16)
-
-L.tileLayer(
-"https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-{
-maxZoom:19,
-attribution:"© OpenStreetMap"
-}
-).addTo(mapa)
-
-L.marker([lat,lon])
-.addTo(mapa)
-.bindPopup("Local da praça")
-
-}catch(e){
-
-console.warn("Erro ao criar mapa:",e)
-
-}
-
-}
-
-
-
-function filtrarPracas(texto){
-
-const termo =
-(texto || "").toLowerCase()
-
-const filtrado =
-dados.filter(p => {
-
-return (p.endereco || "")
-.toLowerCase()
-.includes(termo)
-
-})
-
-renderizarLista(filtrado)
-
-}
-
+    // URL OFICIAL DO GOOGLE (FORMATO JSON VIZ)
+    const URL_PLANILHA = "https://docs.google.com/spreadsheets/d/1raQ49At3U05o1c5sGCpzH_M1kQYxZhxB7dGAOysIquA/gviz/tq?tqx=out:json&sheet=respostas";
+    let dados = [];
+
+    document.addEventListener("DOMContentLoaded", iniciar);
+
+    function iniciar() {
+        carregarAvaliacoes();
+        const campoBusca = document.getElementById("buscar-praca");
+        if (campoBusca) {
+            campoBusca.addEventListener("input", function() {
+                filtrarPracas(this.value);
+            });
+        }
+    }
+
+    async function carregarAvaliacoes() {
+        const container = document.getElementById("lista-avaliacoes");
+        try {
+            const resposta = await fetch(URL_PLANILHA);
+            const texto = await resposta.text();
+            
+            // Tratamento essencial para o formato do Google
+            const jsonLimpo = JSON.parse(texto.substring(47, texto.length - 2));
+            
+            // Mapeia as linhas da planilha para o formato do site
+            dados = jsonLimpo.table.rows.map(row => {
+                const r = row.c;
+                return {
+                    tutor: r[0] ? r[0].v : "Anônimo",
+                    endereco: r[1] ? r[1].v : "",
+                    observacoes: r[2] ? r[2].v : "",
+                    whatsapp: r[4] ? r[4].v : "",
+                    foto: r[5] ? r[5].v : ""
+                };
+            });
+
+            renderizarLista(dados);
+        } catch (erro) {
+            container.innerHTML = "<p style='text-align:center;'>Erro ao carregar relatos. Verifique a planilha.</p>";
+            console.error("Erro QA:", erro);
+        }
+    }
+
+    function renderizarLista(lista) {
+        const container = document.getElementById("lista-avaliacoes");
+        if (!lista || !lista.length) {
+            container.innerHTML = "<p style='text-align:center;'>Nenhuma avaliação encontrada.</p>";
+            return;
+        }
+
+        container.innerHTML = lista.map((item, index) => {
+            return `
+                <article class="card-praca" data-cy="card-praca">
+                    <h3 data-cy="nome-tutor"><i class="fas fa-user-circle"></i> ${item.tutor}</h3>
+                    <p><strong><i class="fas fa-map-marker-alt"></i> Endereço:</strong> 
+                       <span data-cy="endereco-praca">${item.endereco || "-"}</span></p>
+                    <p data-cy="observacoes"><strong>Observações:</strong> ${item.observacoes}</p>
+                    ${item.foto ? `<img src="${item.foto}" alt="Foto da praça" class="foto-praca" data-cy="foto-praca">` : ""}
+                    <p><strong><i class="fab fa-whatsapp"></i> Contato:</strong> ${item.whatsapp || "Não informado"}</p>
+                    <div class="mapa-praca" id="mapa-${index}" role="region" aria-label="Mapa da praça" style="height:300px;margin-top:15px;"></div>
+                </article>
+            `;
+        }).join("");
+
+        iniciarMapas(lista);
+    }
+
+    async function iniciarMapas(lista) {
+        for (let i = 0; i < lista.length; i++) {
+            const endereco = lista[i].endereco;
+            if (!endereco) continue;
+            try {
+                const coords = await buscarCoordenadas(endereco);
+                if (coords) {
+                    const mapa = L.map(`mapa-${i}`).setView([coords.lat, coords.lon], 16);
+                    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+                        attribution: "© OpenStreetMap"
+                    }).addTo(mapa);
+                    L.marker([coords.lat, coords.lon]).addTo(mapa).bindPopup(lista[i].endereco);
+                }
+            } catch (e) {
+                console.warn("Erro no mapa:", e);
+            }
+        }
+    }
+
+    async function buscarCoordenadas(endereco) {
+        const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(endereco)}`;
+        const resposta = await fetch(url);
+        const d = await resposta.json();
+        return d.length ? { lat: d[0].lat, lon: d[0].lon } : null;
+    }
+
+    function filtrarPracas(texto) {
+        const termo = texto.toLowerCase();
+        const filtrado = dados.filter(p => (p.endereco || "").toLowerCase().includes(termo));
+        renderizarLista(filtrado);
+    }
 </script>
 
 </body>
