@@ -4,15 +4,11 @@
 <head>
 
 <meta charset="UTF-8">
-
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Projeto Praça Pet | Ugo Ventura</title>
 
-<link rel="stylesheet" href="css/style.css">
-
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
 <style>
@@ -75,7 +71,8 @@ gap:10px;
 background:#0000cc;
 }
 
-input[type="text"]{
+input[type="text"],
+input[type="file"]{
 width:100%;
 padding:10px;
 border-radius:6px;
@@ -146,7 +143,6 @@ margin-right:8px;
 <header>
 
 <h1>Projeto Praça Pet</h1>
-
 <p>Mapeamento e Avaliação de Praças - Ugo Ventura</p>
 
 </header>
@@ -171,23 +167,42 @@ margin-right:8px;
 
 <label for="foto-praca">Selecionar foto</label>
 
-<input type="file" id="foto-praca" name="foto-praca" accept="image/*">
+<input
+type="file"
+id="foto-praca"
+name="foto-praca"
+accept="image/*"
+aria-describedby="upload-status"
+>
 
 <p id="upload-status" class="status" aria-live="polite"></p>
 
 <label for="foto-url">Link da foto gerado</label>
 
-<input type="text" id="foto-url" name="foto-url" readonly placeholder="O link aparecerá aqui">
+<input
+type="text"
+id="foto-url"
+name="foto-url"
+readonly
+placeholder="O link aparecerá aqui"
+>
 
-<button type="button" class="botao-copiar" id="btn-copiar">
+<button
+type="button"
+class="botao-copiar"
+id="btn-copiar"
+>
 
 <i class="fas fa-copy"></i>
-
 Copiar Link da Foto
 
 </button>
 
-<img id="preview-imagem" alt="Pré visualização da foto da praça" style="display:none;max-width:100%;margin-top:15px;border-radius:10px">
+<img
+id="preview-imagem"
+alt="Pré visualização da foto da praça"
+style="display:none;max-width:100%;margin-top:15px;border-radius:10px"
+>
 
 </section>
 
@@ -199,8 +214,12 @@ Copiar Link da Foto
 src="https://docs.google.com/forms/d/e/1FAIpQLSd1_lme-SfNuk9jrCskzSa_jjmT0-1IQWZY3ox0mP19o7jP1A/viewform?embedded=true"
 width="100%"
 height="1000"
-frameborder="0">
+title="Formulário de avaliação de praças"
+loading="lazy"
+>
+
 Carregando formulário
+
 </iframe>
 
 </section>
@@ -209,7 +228,10 @@ Carregando formulário
 
 <h2>Praças Avaliadas</h2>
 
-<div id="lista-avaliacoes" aria-live="polite">
+<div
+id="lista-avaliacoes"
+aria-live="polite"
+>
 
 <p>Carregando avaliações...</p>
 
@@ -227,43 +249,93 @@ Carregando formulário
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-<script src="js/upload-foto.js"></script>
-
 <script>
 
 const URL_PLANILHA="https://docs.google.com/spreadsheets/d/1raQ49At3U05o1c5sGCpzH_M1kQYxZhxB7dGAOysIquA/gviz/tq?tqx=out:json&sheet=respostas"
 
 document.addEventListener("DOMContentLoaded",()=>{
 
+iniciarUploadFoto()
+
 carregarDados()
 
 setInterval(carregarDados,30000)
 
-document.getElementById("btn-copiar").addEventListener("click",copiarLink)
+document
+.getElementById("btn-copiar")
+.addEventListener("click",copiarLink)
 
 })
 
 function copiarLink(){
 
-const url=document.getElementById("foto-url")
+const campo=document.getElementById("foto-url")
 
-if(url.value){
-
-url.select()
-
-navigator.clipboard.writeText(url.value)
-
-alert("Link copiado. Cole no formulário.")
-
-}else{
+if(!campo.value){
 
 alert("Envie a foto primeiro.")
 
+return
+
 }
+
+campo.select()
+
+navigator.clipboard.writeText(campo.value)
+
+alert("Link copiado. Cole no formulário.")
+
+}
+
+function iniciarUploadFoto(){
+
+const input=document.getElementById("foto-praca")
+
+const preview=document.getElementById("preview-imagem")
+
+const campoUrl=document.getElementById("foto-url")
+
+const status=document.getElementById("upload-status")
+
+input.addEventListener("change",()=>{
+
+const file=input.files[0]
+
+if(!file){
+
+return
+
+}
+
+const leitor=new FileReader()
+
+leitor.onload=function(e){
+
+preview.src=e.target.result
+
+preview.style.display="block"
+
+campoUrl.value=e.target.result
+
+status.textContent="Foto carregada com sucesso."
+
+}
+
+leitor.onerror=function(){
+
+status.textContent="Erro ao carregar a foto."
+
+}
+
+leitor.readAsDataURL(file)
+
+})
 
 }
 
 async function carregarDados(){
+
+const container=document.getElementById("lista-avaliacoes")
 
 try{
 
@@ -276,8 +348,6 @@ const json=JSON.parse(texto.substring(47).slice(0,-2))
 const cols=json.table.cols.map(c=>c.label)
 
 const rows=json.table.rows
-
-const container=document.getElementById("lista-avaliacoes")
 
 container.innerHTML=""
 
@@ -295,13 +365,13 @@ const nome=dados["Nome Completo"]||"Não informado"
 
 if(nome==="Não informado")return
 
-const telefone=dados["Telefone com Whatsapp"]||"Não informado"
+const telefone=dados["whatsapp"]||"Não informado"
 
 const endereco=dados["Nome da praça ou endereço?"]||"Não informado"
 
-const comentario=dados["Gostaria de deixar alguma sugestão ou comentário sobre a praça?"]||"Sem observações."
+const comentario=dados["observacoes"]||"Sem observações."
 
-const foto=dados["Cole aqui o link da foto gerado no site"]||""
+const foto=dados["foto"]||""
 
 const card=document.createElement("article")
 
@@ -317,7 +387,7 @@ card.innerHTML=`
 
 <p><strong><i class="fas fa-comment"></i> Sugestão ou comentário:</strong> ${comentario}</p>
 
-${foto?`<img src="${foto}" alt="Foto da praça enviada pelo usuário" class="foto-praca" onerror="this.style.display='none'">`:`<p><em>Foto não enviada</em></p>`}
+${foto?`<img src="${foto}" alt="Foto da praça enviada pelo usuário" class="foto-praca">`:`<p><em>Foto não enviada</em></p>`}
 
 <div id="map-${i}" class="mapa-praca"></div>
 
@@ -333,9 +403,17 @@ gerarMapa(`map-${i}`,endereco)
 
 })
 
+if(rows.length===0){
+
+container.innerHTML="<p>Nenhuma avaliação encontrada.</p>"
+
+}
+
 }catch(e){
 
-document.getElementById("lista-avaliacoes").innerHTML="<p>Erro ao carregar dados.</p>"
+container.innerHTML="<p>Erro ao carregar dados da planilha.</p>"
+
+console.error(e)
 
 }
 
@@ -347,21 +425,32 @@ try{
 
 const res=await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(endereco)}`)
 
-const d=await res.json()
+const dados=await res.json()
 
-if(d.length){
+if(!dados.length){
 
-const map=L.map(id).setView([d[0].lat,d[0].lon],16)
-
-L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{attribution:"© OpenStreetMap"}).addTo(map)
-
-L.marker([d[0].lat,d[0].lon]).addTo(map)
+return
 
 }
 
+const lat=parseFloat(dados[0].lat)
+
+const lon=parseFloat(dados[0].lon)
+
+const map=L.map(id).setView([lat,lon],16)
+
+L.tileLayer(
+"https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+{
+attribution:"© OpenStreetMap"
+}
+).addTo(map)
+
+L.marker([lat,lon]).addTo(map)
+
 }catch(e){
 
-console.log("Erro mapa")
+console.log("Erro ao gerar mapa",e)
 
 }
 
