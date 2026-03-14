@@ -1,22 +1,25 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
+
 <meta charset="UTF-8">
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Projeto Praça Pet | Ugo Ventura</title>
 
 <link rel="stylesheet" href="css/style.css">
 
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
 <style>
 
 body{
-font-family: Arial, Helvetica, sans-serif;
-background:#f5f7fb;
+font-family:Arial,Helvetica,sans-serif;
+background:#f4f6fb;
 margin:0;
 color:#222;
 line-height:1.6;
@@ -40,46 +43,16 @@ margin-top:0;
 }
 
 .upload-section,
-.formulario,
-section{
+.formulario{
 margin-bottom:40px;
 }
 
-#lista-avaliacoes{
-display:flex;
-flex-direction:column;
-gap:40px;
-padding:20px 0;
-}
-
-.card-praca{
-background:#fff;
-border-radius:15px;
-padding:25px;
-box-shadow:0 4px 20px rgba(0,0,0,0.08);
-border-left:6px solid #0000FF;
+.instrucoes{
+background:#eef2ff;
+padding:20px;
+border-radius:10px;
+border-left:5px solid #0000FF;
 margin-bottom:20px;
-}
-
-.card-praca h3{
-margin-bottom:10px;
-}
-
-.foto-praca{
-width:100%;
-max-height:450px;
-object-fit:cover;
-border-radius:10px;
-margin:15px 0;
-display:block;
-background:#f0f0f0;
-}
-
-.mapa-praca{
-border-radius:10px;
-border:1px solid #ddd;
-height:300px;
-margin-top:15px;
 }
 
 .botao-copiar{
@@ -89,39 +62,73 @@ border:none;
 padding:12px;
 border-radius:6px;
 cursor:pointer;
-margin-top:10px;
 font-weight:bold;
 width:100%;
+margin-top:10px;
 display:flex;
 align-items:center;
 justify-content:center;
 gap:10px;
-font-size:15px;
 }
 
 .botao-copiar:hover{
 background:#0000cc;
 }
 
-.instrucoes{
-background:#eef2ff;
-padding:20px;
+input[type="text"]{
+width:100%;
+padding:10px;
+border-radius:6px;
+border:1px solid #ccc;
+margin-top:10px;
+}
+
+#lista-avaliacoes{
+display:flex;
+flex-direction:column;
+gap:40px;
+margin-top:20px;
+}
+
+.card-praca{
+background:white;
+border-radius:15px;
+padding:25px;
+box-shadow:0 4px 18px rgba(0,0,0,0.08);
+border-left:6px solid #0000FF;
+}
+
+.card-praca p{
+margin:8px 0;
+}
+
+.foto-praca{
+width:100%;
+max-height:420px;
+object-fit:cover;
 border-radius:10px;
-margin-bottom:20px;
-border-left:5px solid #0000FF;
+margin:15px 0;
+background:#f0f0f0;
+}
+
+.mapa-praca{
+height:300px;
+border-radius:10px;
+border:1px solid #ddd;
+margin-top:15px;
+}
+
+footer{
+background:#eee;
+padding:20px;
+text-align:center;
+margin-top:40px;
+font-size:14px;
 }
 
 .status{
 font-size:14px;
 margin-top:10px;
-}
-
-footer{
-text-align:center;
-background:#eee;
-padding:20px;
-margin-top:40px;
-font-size:14px;
 }
 
 h3 i,
@@ -130,21 +137,18 @@ color:#0000FF;
 margin-right:8px;
 }
 
-input[type="text"]{
-width:100%;
-padding:10px;
-border-radius:5px;
-border:1px solid #ccc;
-}
-
 </style>
+
 </head>
 
 <body>
 
 <header>
+
 <h1>Projeto Praça Pet</h1>
+
 <p>Mapeamento e Avaliação de Praças - Ugo Ventura</p>
+
 </header>
 
 <main>
@@ -153,30 +157,37 @@ border:1px solid #ccc;
 
 <h2>1. Envie a foto da praça</h2>
 
-<div class="instrucoes" role="note">
+<div class="instrucoes">
+
 <p><strong>Siga estes passos:</strong></p>
 
 <ol>
-<li>Selecione a foto no botão abaixo.</li>
-<li>Clique no botão <strong>Copiar Link da Foto</strong>.</li>
-<li>Cole no campo específico do formulário abaixo.</li>
+<li>Selecione a foto.</li>
+<li>Clique em copiar link.</li>
+<li>Cole no campo da foto no formulário.</li>
 </ol>
 
 </div>
 
-<input type="file" id="foto-praca" accept="image/*">
+<label for="foto-praca">Selecionar foto</label>
+
+<input type="file" id="foto-praca" name="foto-praca" accept="image/*">
 
 <p id="upload-status" class="status" aria-live="polite"></p>
 
-<input type="text" id="foto-url" readonly placeholder="O link aparecerá aqui após o upload">
+<label for="foto-url">Link da foto gerado</label>
+
+<input type="text" id="foto-url" name="foto-url" readonly placeholder="O link aparecerá aqui">
 
 <button type="button" class="botao-copiar" id="btn-copiar">
+
 <i class="fas fa-copy"></i>
+
 Copiar Link da Foto
+
 </button>
 
-<img id="preview-imagem" alt="Pré-visualização da foto enviada da praça"
-style="display:none;max-width:100%;margin-top:15px;border-radius:10px">
+<img id="preview-imagem" alt="Pré visualização da foto da praça" style="display:none;max-width:100%;margin-top:15px;border-radius:10px">
 
 </section>
 
@@ -189,7 +200,7 @@ src="https://docs.google.com/forms/d/e/1FAIpQLSd1_lme-SfNuk9jrCskzSa_jjmT0-1IQWZ
 width="100%"
 height="1000"
 frameborder="0">
-Carregando formulário...
+Carregando formulário
 </iframe>
 
 </section>
@@ -200,7 +211,7 @@ Carregando formulário...
 
 <div id="lista-avaliacoes" aria-live="polite">
 
-<p style="text-align:center;">Sincronizando dados...</p>
+<p>Carregando avaliações...</p>
 
 </div>
 
@@ -220,8 +231,7 @@ Carregando formulário...
 
 <script>
 
-const URL_PLANILHA =
-"https://docs.google.com/spreadsheets/d/1raQ49At3U05o1c5sGCpzH_M1kQYxZhxB7dGAOysIquA/gviz/tq?tqx=out:json&sheet=respostas"
+const URL_PLANILHA="https://docs.google.com/spreadsheets/d/1raQ49At3U05o1c5sGCpzH_M1kQYxZhxB7dGAOysIquA/gviz/tq?tqx=out:json&sheet=respostas"
 
 document.addEventListener("DOMContentLoaded",()=>{
 
@@ -235,19 +245,19 @@ document.getElementById("btn-copiar").addEventListener("click",copiarLink)
 
 function copiarLink(){
 
-const urlInput=document.getElementById("foto-url")
+const url=document.getElementById("foto-url")
 
-if(urlInput.value){
+if(url.value){
 
-urlInput.select()
+url.select()
 
-navigator.clipboard.writeText(urlInput.value)
+navigator.clipboard.writeText(url.value)
 
-alert("Link copiado. Cole no campo do formulário.")
+alert("Link copiado. Cole no formulário.")
 
 }else{
 
-alert("Primeiro faça o upload da foto.")
+alert("Envie a foto primeiro.")
 
 }
 
@@ -263,29 +273,35 @@ const texto=await res.text()
 
 const json=JSON.parse(texto.substring(47).slice(0,-2))
 
-const linhas=json.table.rows.filter(row=>row.c && row.c[1] && row.c[1].v)
+const cols=json.table.cols.map(c=>c.label)
+
+const rows=json.table.rows
 
 const container=document.getElementById("lista-avaliacoes")
 
 container.innerHTML=""
 
-linhas.reverse().forEach((row,i)=>{
+rows.reverse().forEach((row,i)=>{
 
-const r=row.c
+const dados={}
 
-const item={
+row.c.forEach((celula,index)=>{
 
-tutor:r[1]?r[1].v:"Não informado",
+dados[cols[index]]=celula?celula.v:""
 
-whatsapp:r[2]?r[2].v:"Não informado",
+})
 
-endereco:r[3]?r[3].v:"Não informado",
+const nome=dados["Nome Completo"]||"Não informado"
 
-foto:(r[6] && r[6].v)?r[6].v:"",
+if(nome==="Não informado")return
 
-comentarios:r[7]?r[7].v:"Sem observações."
+const telefone=dados["Telefone com Whatsapp"]||"Não informado"
 
-}
+const endereco=dados["Nome da praça ou endereço?"]||"Não informado"
+
+const comentario=dados["Gostaria de deixar alguma sugestão ou comentário sobre a praça?"]||"Sem observações."
+
+const foto=dados["Cole aqui o link da foto gerado no site"]||""
 
 const card=document.createElement("article")
 
@@ -293,15 +309,15 @@ card.className="card-praca"
 
 card.innerHTML=`
 
-<h3><i class="fas fa-user"></i> Nome: ${item.tutor}</h3>
+<h3><i class="fas fa-user"></i> Nome: ${nome}</h3>
 
-<p><strong><i class="fas fa-phone"></i> Telefone com Whatsapp:</strong> ${item.whatsapp}</p>
+<p><strong><i class="fas fa-phone"></i> Telefone com Whatsapp:</strong> ${telefone}</p>
 
-<p><strong><i class="fas fa-map-marker-alt"></i> Nome da praça ou endereço:</strong> ${item.endereco}</p>
+<p><strong><i class="fas fa-map-marker-alt"></i> Nome da praça ou endereço:</strong> ${endereco}</p>
 
-<p><strong><i class="fas fa-comment"></i> Sugestão ou comentário:</strong> ${item.comentarios}</p>
+<p><strong><i class="fas fa-comment"></i> Sugestão ou comentário:</strong> ${comentario}</p>
 
-${item.foto ? `<img src="${item.foto}" alt="Foto da praça enviada pelo usuário" class="foto-praca" onerror="this.style.display='none'">` : `<p><em>Foto não enviada</em></p>`}
+${foto?`<img src="${foto}" alt="Foto da praça enviada pelo usuário" class="foto-praca" onerror="this.style.display='none'">`:`<p><em>Foto não enviada</em></p>`}
 
 <div id="map-${i}" class="mapa-praca"></div>
 
@@ -309,9 +325,9 @@ ${item.foto ? `<img src="${item.foto}" alt="Foto da praça enviada pelo usuário
 
 container.appendChild(card)
 
-if(item.endereco && item.endereco!=="Não informado"){
+if(endereco!=="Não informado"){
 
-gerarMapa(`map-${i}`,item.endereco)
+gerarMapa(`map-${i}`,endereco)
 
 }
 
@@ -319,9 +335,7 @@ gerarMapa(`map-${i}`,item.endereco)
 
 }catch(e){
 
-document.getElementById("lista-avaliacoes").innerHTML=
-
-"<p>Erro ao carregar dados da planilha.</p>"
+document.getElementById("lista-avaliacoes").innerHTML="<p>Erro ao carregar dados.</p>"
 
 }
 
@@ -337,25 +351,17 @@ const d=await res.json()
 
 if(d.length){
 
-const lat=d[0].lat
+const map=L.map(id).setView([d[0].lat,d[0].lon],16)
 
-const lon=d[0].lon
+L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{attribution:"© OpenStreetMap"}).addTo(map)
 
-const map=L.map(id).setView([lat,lon],16)
-
-L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{
-
-attribution:"© OpenStreetMap"
-
-}).addTo(map)
-
-L.marker([lat,lon]).addTo(map)
+L.marker([d[0].lat,d[0].lon]).addTo(map)
 
 }
 
 }catch(e){
 
-console.log("Erro ao gerar mapa")
+console.log("Erro mapa")
 
 }
 
