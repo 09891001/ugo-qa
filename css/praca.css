@@ -198,3 +198,36 @@ header p {
     margin: 10px 0 0 0 !important; 
     display: block !important;
 }
+
+
+/* FORÇAR FORMULÁRIO LIVRE (SEM QUADRADO) */
+.secao-box:has(#google-form), 
+.container-form {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    height: auto !important; /* Deixa o forms respirar */
+}
+
+#google-form {
+    border: none !important;
+    border-radius: 0 !important;
+}
+
+
+/* ALINHAR TÍTULO DAS PRAÇAS À ESQUERDA COM RECUO */
+h2[data-aos="zoom-in"] {
+    text-align: left !important;
+    margin-left: 8% !important; /* Empurra para a direita para alinhar com o título do topo */
+    color: #0000FF !important;
+    font-weight: 800 !important;
+    display: block !important;
+    width: 100% !important;
+}
+
+/* UNIFORMIZAR TODOS OS TÍTULOS DE SEÇÃO */
+.secao-box h2, .secao-box p {
+    text-align: left !important;
+    margin-left: 5% !important;
+}
