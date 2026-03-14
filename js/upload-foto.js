@@ -1,119 +1,104 @@
 /* =========================================
 UPLOAD DE FOTO PARA CLOUDINARY
-Projeto Praça Pet
+Projeto Praça Pet - Versão Homologada
 ========================================= */
 
 const CLOUD_NAME = "dtfehnpxy";
 const UPLOAD_PRESET = "praca_pet";
 
-const uploadInput = document.getElementById("foto-praca");
-const uploadStatus = document.getElementById("upload-status");
-const fotoUrlInput = document.getElementById("foto-url");
-const previewImagem = document.getElementById("preview-imagem");
+// Iniciamos o script garantindo que a página carregou completamente
+document.addEventListener("DOMContentLoaded", () => {
+    
+    const uploadInput = document.getElementById("foto-praca");
+    const uploadStatus = document.getElementById("upload-status");
+    const fotoUrlInput = document.getElementById("foto-url");
+    const previewImagem = document.getElementById("preview-imagem");
 
-if (uploadInput) {
+    // Só executa a lógica se o campo de upload existir na página atual
+    if (uploadInput) {
 
-uploadInput.addEventListener("change", async function () {
+        uploadInput.addEventListener("change", async function () {
+            const file = uploadInput.files[0];
 
-const file = uploadInput.files[0];
+            if (!file) return;
 
-if (!file) {
-return;
-}
+            /* =============================
+            VALIDAÇÃO DE ARQUIVO
+            ============================= */
+            const tiposPermitidos = ["image/jpeg", "image/png", "image/webp"];
 
-/* =============================
-VALIDAÇÃO DE ARQUIVO
-============================= */
+            if (!tiposPermitidos.includes(file.type)) {
+                if (uploadStatus) uploadStatus.textContent = "Formato inválido. Use JPG, PNG ou WEBP.";
+                return;
+            }
 
-const tiposPermitidos = [
-"image/jpeg",
-"image/png",
-"image/webp"
-];
+            /* =============================
+            VALIDAÇÃO DE TAMANHO (5MB)
+            ============================= */
+            const tamanhoMaximo = 5 * 1024 * 1024;
+            if (file.size > tamanhoMaximo) {
+                if (uploadStatus) uploadStatus.textContent = "A imagem deve ter no máximo 5MB.";
+                return;
+            }
 
-if (!tiposPermitidos.includes(file.type)) {
+            // Feedback visual de carregamento
+            if (uploadStatus) {
+                uploadStatus.textContent = "Enviando imagem... Por favor, aguarde.";
+                uploadStatus.style.color = "#0000FF";
+            }
 
-uploadStatus.textContent =
-"Formato inválido. Use JPG, PNG ou WEBP.";
+            /* =============================
+            UPLOAD PARA CLOUDINARY
+            ============================= */
+            const formData = new FormData();
+            formData.append("file", file);
+            formData.append("upload_preset", UPLOAD_PRESET);
 
-return;
+            try {
+                const resposta = await fetch(
+                    `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
+                    {
+                        method: "POST",
+                        body: formData
+                    }
+                );
 
-}
+                if (!resposta.ok) throw new Error("Erro no servidor do Cloudinary");
 
-/* =============================
-VALIDAÇÃO DE TAMANHO
-============================= */
+                const dados = await resposta.json();
+                const urlImagem = dados.secure_url;
 
-const tamanhoMaximo = 5 * 1024 * 1024;
+                /* =============================
+                SUCESSO - PREENCHIMENTO DE DADOS
+                ============================= */
+                if (fotoUrlInput) {
+                    fotoUrlInput.value = urlImagem;
+                    // Foco visual/auditivo no link gerado
+                    fotoUrlInput.focus(); 
+                }
 
-if (file.size > tamanhoMaximo) {
+                if (uploadStatus) {
+                    uploadStatus.textContent = "Upload concluído com sucesso!";
+                    uploadStatus.style.color = "green";
+                }
 
-uploadStatus.textContent =
-"A imagem deve ter no máximo 5MB.";
+                /* =============================
+                PREVIEW DA IMAGEM
+                ============================= */
+                if (previewImagem) {
+                    previewImagem.src = urlImagem;
+                    previewImagem.style.display = "block";
+                    previewImagem.style.maxWidth = "100%";
+                    previewImagem.style.marginTop = "15px";
+                }
 
-return;
-
-}
-
-uploadStatus.textContent =
-"Enviando imagem...";
-
-/* =============================
-UPLOAD PARA CLOUDINARY
-============================= */
-
-const formData = new FormData();
-
-formData.append("file", file);
-formData.append("upload_preset", UPLOAD_PRESET);
-
-try {
-
-const resposta = await fetch(
-`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
-{
-method: "POST",
-body: formData
-}
-);
-
-if (!resposta.ok) {
-throw new Error("Erro no upload");
-}
-
-const dados = await resposta.json();
-
-const urlImagem = dados.secure_url;
-
-/* =============================
-SUCESSO
-============================= */
-
-fotoUrlInput.value = urlImagem;
-
-uploadStatus.textContent =
-"Upload concluído com sucesso.";
-
-/* =============================
-PREVIEW DA IMAGEM
-============================= */
-
-if (previewImagem) {
-
-previewImagem.src = urlImagem;
-previewImagem.style.display = "block";
-
-}
-
-} catch (erro) {
-
-uploadStatus.textContent =
-"Erro ao enviar imagem. Tente novamente.";
-
-console.error("Erro upload:", erro);
-
-}
-
+            } catch (erro) {
+                if (uploadStatus) {
+                    uploadStatus.textContent = "Erro ao enviar imagem. Verifique sua conexão.";
+                    uploadStatus.style.color = "red";
+                }
+                console.error("Erro no processo de upload:", erro);
+            }
+        });
+    }
 });
-
-}
