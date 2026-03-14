@@ -3,138 +3,155 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Projeto Praça Pet | Ugo Ventura</title>
+    <title>Projeto Praça Pet | Mapeamento e Acessibilidade</title>
+    
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/praca.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <style>
-        body { font-family: Arial, sans-serif; background: #f4f6fb; margin: 0; color: #222; }
-        header { background: #0000FF; color: white; padding: 20px; text-align: center; }
-        main { max-width: 1100px; margin: auto; padding: 20px; }
-        .card-praca { background: white; border-radius: 15px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-left: 6px solid #0000FF; margin-bottom: 30px; }
-        .foto-praca { width: 100%; max-height: 400px; object-fit: cover; border-radius: 10px; margin-top: 15px; display: block; }
-        .mapa-praca { height: 300px; border-radius: 10px; margin-top: 15px; border: 1px solid #ccc; background: #eee; }
-        .instrucoes { background: #eef2ff; padding: 15px; border-radius: 8px; border-left: 5px solid #0000FF; margin-bottom: 20px; }
-        .botao-copiar { background: #0000FF; color: white; border: none; padding: 12px; width: 100%; border-radius: 5px; cursor: pointer; font-weight: bold; margin-top: 10px; }
-        input[readonly] { background: #f9f9f9; width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
-    </style>
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 </head>
 <body>
 
-<header>
-    <h1>Projeto Praça Pet</h1>
-    <p>Mapeamento e Avaliação - Ugo Ventura</p>
+<header data-aos="fade-down">
+    <h1><i class="fas fa-dog"></i> Projeto Praça Pet</h1>
+    <p>Mapeando o lazer e a acessibilidade urbana por Ugo Ventura</p>
 </header>
 
 <main>
-    <section class="upload-section">
-        <h2>1. Envie a foto da Praça</h2>
-        <div class="instrucoes">
-            <p><strong>Ação:</strong> Selecione a foto, aguarde o link aparecer, copie e cole no formulário abaixo.</p>
-        </div>
-        <input type="file" id="foto-praca" accept="image/*">
-        <p id="upload-status" style="margin-top:10px; font-weight: bold;"></p>
+    <div id="msg-sucesso">
+        <i class="fas fa-check-circle"></i> Avaliação enviada com sucesso! Seu registro já está disponível abaixo.
+    </div>
+
+    <section class="secao-box" data-aos="fade-right">
+        <h2><i class="fas fa-camera"></i> 1. Envie a Foto</h2>
+        <p>Selecione a foto da praça para gerar o link oficial de mapeamento.</p>
+        <input type="file" id="foto-praca" accept="image/*" style="margin-bottom: 10px;">
+        <p id="upload-status" style="color: #0000FF; font-weight: bold;"></p>
         <input type="text" id="foto-url" readonly placeholder="O link aparecerá aqui">
-        <button id="btn-copiar" class="botao-copiar">Copiar Link da Foto</button>
+        <button id="btn-copiar" class="botao-copiar">COPIAR LINK DA FOTO</button>
     </section>
 
-    <section class="formulario">
-        <h2>2. Preencha a Avaliação</h2>
-        <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSd1_lme-SfNuk9jrCskzSa_jjmT0-1IQWZY3ox0mP19o7jP1A/viewform?embedded=true" width="100%" height="800" frameborder="0">Carregando formulário...</iframe>
+    <section class="secao-box" data-aos="fade-left">
+        <h2><i class="fas fa-edit"></i> 2. Avaliação Técnica</h2>
+        <div class="container-form">
+            <iframe id="google-form" src="https://docs.google.com/forms/d/e/1FAIpQLSd1_lme-SfNuk9jrCskzSa_jjmT0-1IQWZY3ox0mP19o7jP1A/viewform?embedded=true">Carregando...</iframe>
+        </div>
     </section>
 
-    <section>
-        <h2>Praças Avaliadas</h2>
-        <div id="lista-avaliacoes">Carregando avaliações...</div>
-    </section>
+    <h2 style="text-align: left;margin-top: 50px;" data-aos="zoom-in">Praças Registradas pela Comunidade</h2>
+    
+    <div id="lista-avaliacoes" aria-live="polite"></div>
 </main>
 
+<footer>
+    <p><strong>Projeto Praça Pet Acessível</strong></p>
+    <p>© 2026 - Desenvolvido por Ugo Ventura</p>
+</footer>
+
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 <script src="js/upload-foto.js"></script>
 
 <script>
-// ID da sua nova planilha confirmada
-const ID_PLANILHA = "1aNRlySyjC1W0rJdMChrfaqCHcKafYdJoWDi3LOBl9nE";
-const URL_DADOS = `https://docs.google.com/spreadsheets/d/${ID_PLANILHA}/gviz/tq?tqx=out:json`;
+    AOS.init({ duration: 1000, once: true });
 
-document.addEventListener("DOMContentLoaded", () => {
-    carregarDados();
-    setInterval(carregarDados, 15000); // Atualiza a cada 15 segundos
+    const ID_PLANILHA = "1aNRlySyjC1W0rJdMChrfaqCHcKafYdJoWDi3LOBl9nE";
+    const URL_DADOS = `https://docs.google.com/spreadsheets/d/${ID_PLANILHA}/gviz/tq?tqx=out:json`;
+
+    async function carregarDados(scrollAoNovo = false) {
+        try {
+            const response = await fetch(URL_DADOS);
+            const text = await response.text();
+            const jsonData = JSON.parse(text.substring(47).slice(0, -2));
+            const rows = jsonData.table.rows;
+            const container = document.getElementById("lista-avaliacoes");
+            
+            container.innerHTML = "";
+            const dadosProcessados = [...rows].reverse();
+
+            dadosProcessados.forEach((row, i) => {
+                const c = row.c;
+                // Ignora linhas vazias ou cabeçalhos
+                if (!c || !c[1] || !c[1].v || c[1].v === "Nome Completo" || c[1].v.includes("Coluna")) return;
+
+                const nome       = c[1].v;
+                const whatsapp   = c[2] ? c[2].v : "N/A";
+                const endereco   = c[3] ? c[3].v : "Não informado";
+                const comentario = c[4] ? c[4].v : "Sem comentários.";
+                const foto       = c[5] ? c[5].v : "";
+
+                const card = document.createElement("article");
+                card.className = "card-praca";
+                if(i === 0) card.id = "novo-card";
+                card.setAttribute("tabindex", "0");
+                card.setAttribute("data-aos", "fade-up");
+                
+                // Estrutura HTML do card ajustada para o praca.css profissional
+                card.innerHTML = `
+                    <h3><i class="fas fa-user-check"></i> Avaliação de: ${nome}</h3>
+                    <p><i class="fab fa-whatsapp"></i> <strong>Contato:</strong> ${whatsapp}</p>
+                    <p><i class="fas fa-map-marker-alt"></i> <strong>Local:</strong> ${endereco}</p>
+                    <div style="background: #f9f9f9; padding: 15px; border-radius: 12px; border-left: 5px solid #0000FF; margin-top:15px;">
+                        <i class="fas fa-quote-left" style="color:#0000FF; margin-right:10px;"></i> ${comentario}
+                    </div>
+                    ${foto.startsWith("http") ? `<img src="${foto}" class="foto-praca" alt="Foto da praça">` : ""}
+                    <div id="map-${i}" class="mapa-praca"></div>
+                    <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(endereco)}" target="_blank" class="btn-streetview">
+                        <i class="fas fa-street-view"></i> VISITA VIRTUAL (STREET VIEW)
+                    </a>
+                `;
+                container.appendChild(card);
+                if (endereco !== "Não informado") gerarMapa(`map-${i}`, endereco);
+            });
+
+            if (scrollAoNovo) {
+                document.getElementById("msg-sucesso").style.display = "block";
+                setTimeout(() => {
+                    const novo = document.getElementById("novo-card");
+                    if(novo) { novo.scrollIntoView({ behavior: 'smooth' }); novo.focus(); }
+                }, 500);
+            }
+        } catch (e) { console.error("Erro ao carregar dados:", e); }
+    }
+
+    // Lógica para detectar o envio do Google Forms
+    let formIframe = document.getElementById('google-form');
+    let loadCounter = 0;
+    formIframe.onload = function() {
+        loadCounter++;
+        if (loadCounter > 1) carregarDados(true);
+    };
+
+    async function gerarMapa(id, local) {
+        try {
+            const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(local)}`);
+            const data = await res.json();
+            if (data.length > 0) {
+                // Configuração de mapa limpo (sem botões técnicos)
+                const map = L.map(id, {
+                    zoomControl: false, 
+                    dragging: false, 
+                    touchZoom: false, 
+                    scrollWheelZoom: false
+                }).setView([data[0].lat, data[0].lon], 16);
+                
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+                L.marker([data[0].lat, data[0].lon]).addTo(map);
+            }
+        } catch (e) {}
+    }
 
     document.getElementById("btn-copiar").addEventListener("click", () => {
-        const urlInput = document.getElementById("foto-url");
-        if(urlInput.value) {
-            urlInput.select();
-            navigator.clipboard.writeText(urlInput.value);
-            alert("Link copiado! Agora é só colar no formulário.");
+        const url = document.getElementById("foto-url");
+        if(url.value) {
+            url.select();
+            navigator.clipboard.writeText(url.value);
+            alert("Link da foto copiado!");
         }
     });
-});
 
-async function carregarDados() {
-    try {
-        const response = await fetch(URL_DADOS);
-        const text = await response.text();
-        const jsonData = JSON.parse(text.substring(47).slice(0, -2));
-        const rows = jsonData.table.rows;
-        const container = document.getElementById("lista-avaliacoes");
-        
-        container.innerHTML = "";
-
-        // Mostra o mais recente primeiro
-        const dadosInvertidos = [...rows].reverse();
-
-        dadosInvertidos.forEach((row, i) => {
-            const c = row.c;
-            
-            // SEGURANÇA: Se o nome estiver vazio, ignora a linha (evita cards fantasmas)
-            if (!c || !c[1] || !c[1].v || c[1].v.trim() === "") return;
-
-            // Mapeamento baseado na sua planilha atualizada
-            const nome       = c[1] ? c[1].v : "Anônimo";
-            const whatsapp   = c[2] ? c[2].v : "Não informado";
-            const endereco   = c[3] ? c[3].v : "Não informado";
-            const comentario = c[4] ? c[4].v : "Sem observações.";
-            const fotoUrl    = c[5] ? c[5].v : "";
-
-            const card = document.createElement("article");
-            card.className = "card-praca";
-            card.innerHTML = `
-                <h3><i class="fas fa-user"></i> Nome: ${nome}</h3>
-                <p><strong><i class="fab fa-whatsapp"></i> WhatsApp:</strong> ${whatsapp}</p>
-                <p><strong><i class="fas fa-map-marker-alt"></i> Local:</strong> ${endereco}</p>
-                <p><strong><i class="fas fa-comment"></i> Avaliação:</strong> ${comentario}</p>
-                
-                ${fotoUrl && fotoUrl.startsWith("http") ? 
-                    `<img src="${fotoUrl}" class="foto-praca" alt="Foto de ${endereco}">` : 
-                    `<p style="color:#666;"><i class="fas fa-image-slash"></i> Sem foto cadastrada.</p>`
-                }
-                
-                <div id="map-${i}" class="mapa-praca"></div>
-            `;
-            container.appendChild(card);
-
-            if (endereco && endereco !== "Não informado") {
-                gerarMapa(`map-${i}`, endereco);
-            }
-        });
-    } catch (err) {
-        console.error("Erro:", err);
-        document.getElementById("lista-avaliacoes").innerHTML = "<p>Nenhuma avaliação disponível no momento.</p>";
-    }
-}
-
-async function gerarMapa(id, local) {
-    try {
-        const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(local)}`);
-        const data = await res.json();
-        if (data && data.length > 0) {
-            const map = L.map(id, {scrollWheelZoom: false}).setView([data[0].lat, data[0].lon], 16);
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-            L.marker([data[0].lat, data[0].lon]).addTo(map);
-        }
-    } catch (e) {}
-}
+    carregarDados();
 </script>
 </body>
 </html>

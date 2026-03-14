@@ -1,0 +1,200 @@
+/* ============================================================
+   PROJETO PRAÇA PET - VERSÃO OMNI FINAL (UGO VENTURA)
+   Status: Estável / Profissional / Blindado contra erros
+   ============================================================ */
+
+/* 1. CONFIGURAÇÃO GERAL E FUNDO */
+body {
+    background-color: #f0f3f8 !important; /* Cinza azulado moderno */
+    color: #2d3436;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    line-height: 1.6;
+}
+
+/* 2. LIMPEZA TOTAL DE ELEMENTOS DO MAPA (LEAFLET) */
+/* Blindagem contra marcadores, sombras e controles técnicos */
+.leaflet-pane, 
+.leaflet-control-container, 
+.leaflet-marker-icon, 
+.leaflet-marker-shadow, 
+.leaflet-shadow-pane, 
+.leaflet-marker-pane,
+.leaflet-control-attribution {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
+
+/* 3. CARD PREMIUM (ESTILO ELEVADO) */
+.card-praca {
+    border: none !important;
+    background: #ffffff;
+    padding: 35px 28px !important;
+    margin-bottom: 45px;
+    border-radius: 24px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border-top: 8px solid #0000FF !important; /* Destaque superior forte */
+    position: relative;
+    overflow: hidden;
+}
+
+.card-praca:hover {
+    transform: translateY(-12px);
+    box-shadow: 0 25px 50px rgba(0, 0, 255, 0.1);
+}
+
+/* 4. TÍTULOS E ALINHAMENTO DE ÍCONES (GRID DE PRECISÃO) */
+.card-praca h3 {
+    color: #0000FF;
+    font-size: 1.45em;
+    font-weight: 800;
+    margin-bottom: 25px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.card-praca p {
+    font-size: 1.05em;
+    color: #333; /* Texto mais denso para leitura */
+    margin: 16px 0;
+    display: grid;
+    grid-template-columns: 35px 1fr; /* Coluna fixa para ícones = alinhamento perfeito */
+    align-items: center;
+}
+
+.card-praca p i {
+    color: #0000FF;
+    font-size: 1.25em;
+    justify-self: center; /* Centraliza o ícone na coluna dele */
+}
+
+/* 5. BOX DE COMENTÁRIO (DESIGN DE CITAÇÃO) */
+.box-comentario {
+    background: #f8faff;
+    padding: 22px;
+    border-radius: 18px;
+    border-left: 6px solid #0000FF;
+margin: 35px 0 25px 0;
+    font-style: italic;
+    color: #444;
+    box-shadow: inset 2px 2px 5px rgba(0,0,0,0.02);
+}
+
+/* 6. FOTO DA PRAÇA (ACABAMENTO DE GALERIA) */
+.foto-praca {
+    width: 100%;
+    height: 320px;
+    object-fit: cover;
+    border-radius: 20px;
+    margin: 20px 0;
+    border: 5px solid #fff;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+/* 7. MAPA (COMO FUNDO VISUAL) */
+.mapa-praca {
+    border-radius: 20px;
+    overflow: hidden;
+    height: 220px;
+    margin-top: 15px;
+    filter: grayscale(0.2); /* Deixa o mapa mais sóbrio */
+}
+
+/* 8. BOTÃO STREET VIEW (AÇÃO PRINCIPAL) */
+.btn-streetview {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    background: #db4437; /* Vermelho Google oficial */
+    color: white !important;
+    padding: 22px;
+    border-radius: 18px;
+    text-decoration: none;
+    font-weight: 800;
+    font-size: 1.1em;
+    margin-top: 30px;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 0 10px 20px rgba(219, 68, 55, 0.3);
+}
+
+.btn-streetview:hover {
+    background: #c53929;
+    box-shadow: 0 12px 25px rgba(219, 68, 55, 0.4);
+    transform: scale(1.02);
+}
+
+.btn-streetview:active {
+    transform: scale(0.96);
+}
+
+/* 9. MENSAGEM DE SUCESSO (BARRA SUPERIOR) */
+#msg-sucesso {
+    max-width: 900px;
+    margin: 20px auto;
+    padding: 20px;
+    border-radius: 16px;
+    background: #1e7e34;
+    color: white;
+    font-weight: bold;
+    text-align: center;
+    box-shadow: 0 8px 20px rgba(30, 126, 52, 0.2);
+}
+
+/* 10. AJUSTES PARA CELULAR (MOBILE FIRST) */
+@media (max-width: 768px) {
+    .card-praca {
+        margin: 20px 12px 40px 12px;
+        padding: 30px 20px !important;
+        border-radius: 25px;
+    }
+    
+    .foto-praca {
+        height: 260px;
+    }
+
+    .card-praca h3 {
+        font-size: 1.25em;
+    }
+
+    .btn-streetview {
+        font-size: 1em;
+        padding: 20px 10px;
+    }
+}
+
+/* 11. ESCONDER ELEMENTOS DE SUPORTE NO FORMULÁRIO */
+.container-form {
+    height: 615px !important;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+}
+
+/* ============================================================
+   FORÇAR ALINHAMENTO DO HEADER À ESQUERDA (UGO VENTURA)
+   ============================================================ */
+header { 
+    text-align: left !important; 
+    padding: 60px 8% !important; /* Dá um recuo lateral elegante */
+    display: block !important;
+}
+
+header h1 { 
+    display: flex !important;
+    justify-content: flex-start !important; /* Alinha o ícone e texto à esquerda */
+    align-items: center !important;
+    gap: 15px !important;
+    margin: 0 !important;
+}
+
+header p { 
+    text-align: left !important; 
+    margin: 10px 0 0 0 !important; 
+    display: block !important;
+}
